@@ -24,6 +24,8 @@ public:
 
 	sf::TcpSocket* getSocket();
 
+	sf::TcpSocket& getRefSocket();
+
 private:
 	//sf::TcpSocket socket; // if i use this then it wont be able to have getteres cause it cant be copied and no copy constructor
 	sf::TcpSocket* mSocket;

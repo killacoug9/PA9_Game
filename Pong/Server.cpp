@@ -18,10 +18,12 @@ Server::Server(int nPlayers, bool gActive) {
 void Server::listenForConections(){
 	
 	sf::TcpListener listenerSocket;
+	listenerSocket.listen(SERVER_PORT);
+	acceptConnection(listenerSocket);
 
-	if (listenerSocket.listen(SERVER_PORT) == sf::Socket::Done) { // the ==(and to the right of it) is incorrect but im doing this so it compiles
-		acceptConnection(listenerSocket);
-	}
+	//if (listenerSocket.listen(SERVER_PORT) != sf::Socket::Done) { // the ==(and to the right of it) is incorrect but im doing this so it compiles
+	//	acceptConnection(listenerSocket);
+	//}
 	
 }
 
@@ -31,9 +33,17 @@ bool Server::acceptConnection(sf::TcpListener& listener) {
 
 	// sf::TcpSocket client; // do i need to do this dynamically??
 	Client* newClient = new Client();
-	if (listener.accept(*(newClient->getSocket())) == sf::Socket::Done) {
-		cout << "A new client just connected from " << (newClient->getSocket())->sf::TcpSocket::getRemoteAddress() << endl;
-		this->mClientVector.push_back(newClient);
+
+	while (true) {
+		/*if (listener.accept(*(newClient->getSocket())) == sf::Socket::Done) {
+				cout << "A new client just connected from " << (newClient->getSocket())->sf::TcpSocket::getRemoteAddress() << endl;
+				this->mClientVector.push_back(newClient);
+			}*/
+		if (listener.accept((newClient->getRefSocket())) == sf::Socket::Done) {
+			cout << "A new client just connected from " << (newClient->getSocket())->sf::TcpSocket::getRemoteAddress() << endl;
+			this->mClientVector.push_back(newClient);
+		}
 	}
+
 	return true;
 }

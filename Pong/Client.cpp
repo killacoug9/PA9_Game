@@ -23,3 +23,7 @@ void Client::checkForNewPlayerConnected() {
 sf::TcpSocket* Client::getSocket() {
 	return this->mSocket;
 }
+
+sf::TcpSocket& Client::getRefSocket() {
+	return *this->mSocket;
+}
