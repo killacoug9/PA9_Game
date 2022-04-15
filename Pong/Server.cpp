@@ -29,7 +29,7 @@ void Server::listenForConections(){
 bool Server::acceptConnection(sf::TcpListener& listener) {
 	// this is Tcp rn
 
-	// sf::TcpSocket client; // do i need to do this dynamically??
+	sf::TcpSocket client; // do i need to do this dynamically??
 	if (listener.accept(client) == sf::Socket::Done) {
 		cout << "A new client just connected from " << client.getRemoteAddress() << endl;
 		this->clientVector.push_back(client);
