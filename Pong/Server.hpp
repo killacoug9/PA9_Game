@@ -16,7 +16,8 @@ using std::endl;
 // once a selector returns true it means something has data ready but it doesnt tell you which.. must use isReady() on each socket to see which is ready
 
 #define SERVER_PORT 53000
-#define logl(x) cout << x << endl; // im mind blown rn
+//#define logl(x) cout << x << endl; // im mind blown rn // source:: "Making a basic Multi_Client Chat Appl. Using SFML and C++(...)"
+
 // or PORT 55001??
 
 
@@ -34,7 +35,7 @@ public:
 	// void runServer(); // will contain all stuff
 
 private:
-	
+	//sf::TcpListener mListenerSocket;
 	vector<Client*> mClientVector; // changed to Client* from Client// should this contain a vector of sockets or a vector of client Objects that contain a socket member??? // apparently you cant store sockets in a vector // but you can  // std::vector<std::unique_ptr<sf::TcpSocket>> sockets;
 /* Source: https://en.sfml-dev.org/forums/index.php?topic=20079.0
 * 

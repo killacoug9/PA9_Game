@@ -16,15 +16,10 @@ Server::Server(int nPlayers, bool gActive) {
 
 
 void Server::listenForConections(){
-	
 	sf::TcpListener listenerSocket;
 	listenerSocket.listen(SERVER_PORT);
-	acceptConnection(listenerSocket);
 
-	//if (listenerSocket.listen(SERVER_PORT) != sf::Socket::Done) { // the ==(and to the right of it) is incorrect but im doing this so it compiles
-	//	acceptConnection(listenerSocket);
-	//}
-	
+	acceptConnection(listenerSocket);
 }
 
 // return the true if the socket got connected succesfully
@@ -46,11 +41,11 @@ bool Server::acceptConnection(sf::TcpListener& listener) {
 			this->mClientVector.push_back(newClient);
 		}*/
 		if (listener.accept(client) == sf::Socket::Done) {
-			cout << "A new client just connected from " << client.sf::TcpSocket::getRemoteAddress() << endl;
-			//this->mClientVector.push_back(newClient);
+			logl("A new client just connected from " << client.sf::TcpSocket::getRemoteAddress());
+			this->mClientVector.push_back(newClient);
 		}
 		else {
-			cout << " it tried " << endl;
+			logl("A new client didnt connect");
 		}
 	}
 
