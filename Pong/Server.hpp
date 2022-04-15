@@ -16,6 +16,7 @@ using std::endl;
 // once a selector returns true it means something has data ready but it doesnt tell you which.. must use isReady() on each socket to see which is ready
 
 #define SERVER_PORT 53000
+#define logl(x) cout << x << endl; // im mind blown rn
 // or PORT 55001??
 
 

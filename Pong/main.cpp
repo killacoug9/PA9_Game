@@ -60,7 +60,7 @@ int main()
 	sf::Thread thread(&Server::listenForConections, &server); // works?
 	thread.launch();
 	socket.connect(SERVER_LOCAL_IP, SERVER_PORT);
-	
+	logl("is this working") // this doesnt need a semi colon???!??!?!?!?!?!??!?!?!?!??!?!?!?!?!??!?!?!?!??!?!?!?!?!?!?!?
 	/* WORKS!!!
 	sf::TcpListener listener;
 	sf::TcpSocket client;
