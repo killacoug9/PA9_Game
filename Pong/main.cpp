@@ -5,6 +5,8 @@
 //                a circle in the window.
 
 #include <SFML/Graphics.hpp>
+#include "Client.hpp"
+#include "Server.hpp"
 
 #define WINDOW_WIDTH 1000
 #define WINDOW_HEIGHT 800
@@ -22,6 +24,7 @@
 
 int main()
 {
+	/*
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game!");
 	sf::CircleShape shape(100.f);
 
@@ -39,7 +42,10 @@ int main()
 		window.clear();
 		window.draw(shape);
 		window.display();
-	}
+	}*/
+
+	Server server;
+	Client client;
 
 	return 0;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Network.hpp>
+#include "Client.hpp"
 
 #include <iostream>
 #include <vector>
@@ -21,7 +22,7 @@ using std::endl;
 class Server
 {
 public:
-	Server();
+	Server(int nPlayers = 1, bool gActive = false); // should nPlayers defualt to 1 or 0??
 
 
 
@@ -33,7 +34,7 @@ public:
 
 private:
 	
-	vector<sf::TcpSocket> clientVector; // should this contain a vector of sockets or a vector of client Objects that contain a socket member??? // apparently you cant store sockets in a vector // but you can  // std::vector<std::unique_ptr<sf::TcpSocket>> sockets;
+	vector<Client*> mClientVector; // changed to Client* from Client// should this contain a vector of sockets or a vector of client Objects that contain a socket member??? // apparently you cant store sockets in a vector // but you can  // std::vector<std::unique_ptr<sf::TcpSocket>> sockets;
 /* Source: https://en.sfml-dev.org/forums/index.php?topic=20079.0
 * 
 		std::list<sf::TcpSocket> connectionList;
@@ -51,9 +52,9 @@ private:
 *But for many purposes you won't even notice that. 
 *It was silly of me not to mention this option in the last post.
 */
-	vector<std::unique_ptr<sf::TcpSocket>> sockets;
-	int numberOfPlayers;
-	bool gameActive;
+	// vector<std::unique_ptr<sf::TcpSocket>> sockets; // another possible way to store a vector of Sockets
+	int mNumberOfPlayers;
+	bool mGameActive;
 
 
 

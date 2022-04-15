@@ -108,7 +108,7 @@ public:
     /// \see listen
     ///
     ////////////////////////////////////////////////////////////
-    Status accept(TcpSocket& socket);
+    Status accept(TcpSocket& mSocket);
 };
 
 

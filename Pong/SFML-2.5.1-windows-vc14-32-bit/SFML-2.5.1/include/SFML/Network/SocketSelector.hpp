@@ -77,7 +77,7 @@ public:
     /// \see remove, clear
     ///
     ////////////////////////////////////////////////////////////
-    void add(Socket& socket);
+    void add(Socket& mSocket);
 
     ////////////////////////////////////////////////////////////
     /// \brief Remove a socket from the selector
@@ -90,7 +90,7 @@ public:
     /// \see add, clear
     ///
     ////////////////////////////////////////////////////////////
-    void remove(Socket& socket);
+    void remove(Socket& mSocket);
 
     ////////////////////////////////////////////////////////////
     /// \brief Remove all the sockets stored in the selector
@@ -139,7 +139,7 @@ public:
     /// \see isReady
     ///
     ////////////////////////////////////////////////////////////
-    bool isReady(Socket& socket) const;
+    bool isReady(Socket& mSocket) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
