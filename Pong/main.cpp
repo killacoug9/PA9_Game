@@ -52,31 +52,35 @@ int main()
 	//sf::Thread threadListen(&(socket.connect), SERVER_LOCAL_IP, SERVER_PORT);
 
 	//sf::Thread thread(&Server::listenForConections, &socket);
-	sf::Thread thread(&Server::listenForConections, &server);
-
-	/*sf::Thread thread([]() {
-		std::cout << "I am in thread!" << std::endl;
-		});*/
-
+	//// /*sf::Thread thread([]() {
+	//	std::cout << "I am in thread!" << std::endl;
+	//	});*/
+	
+	// This works too
+	sf::Thread thread(&Server::listenForConections, &server); // works?
 	thread.launch();
-
+	socket.connect(SERVER_LOCAL_IP, SERVER_PORT);
 	
-	
+	/* WORKS!!!
 	sf::TcpListener listener;
+	sf::TcpSocket client;
+
 	listener.listen(SERVER_PORT);
 
-	sf::TcpSocket client;
+	
 	socket.connect(SERVER_LOCAL_IP, SERVER_PORT);
 
-	while (true) {
-		if (listener.accept(client) == sf::Socket::Done) {
-			cout << "A new client just connected from " << client.sf::TcpSocket::getRemoteAddress() << endl;
-			//this->mClientVector.push_back(newClient);
-		}
-		else {
-			cout << " it tried " << endl;
-		}
-	}
+	server.acceptConnection(listener);
+*/	
+
+		//if (listener.accept(client) == sf::Socket::Done) {
+		//	cout << "A new client just connected from " << client.sf::TcpSocket::getRemoteAddress() << endl;
+		//	//this->mClientVector.push_back(newClient);
+		//}
+		//else {
+		//	cout << " it tried " << endl;
+		//}
+	
 	
 
 

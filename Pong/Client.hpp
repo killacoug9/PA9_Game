@@ -13,7 +13,8 @@ using std::endl;
 
 class Client {
 public:
-	Client(sf::TcpSocket* socket = nullptr, int id = 0);
+	//Client(sf::TcpSocket* socket = nullptr, int id = 0);
+	Client(std::unique_ptr<sf::TcpSocket> socket = nullptr, int id = 0);
 
 	//Client(Client& copy);
 
@@ -22,14 +23,14 @@ public:
 	// will tell the client if a new person joined their lobby
 	void checkForNewPlayerConnected();
 
-	sf::TcpSocket* getSocket();
+	//sf::TcpSocket* getSocket();
 
-	sf::TcpSocket& getRefSocket();
+	std::unique_ptr<sf::TcpSocket>& getRefSocket();
 
 private:
 	//sf::TcpSocket socket; // if i use this then it wont be able to have getteres cause it cant be copied and no copy constructor
-	sf::TcpSocket* mSocket;
-	//std::unique_ptr<sf::TcpSocket> socket;
+	//sf::TcpSocket* mSocket;
+	std::unique_ptr<sf::TcpSocket>* mSocket;
 	int mId; // maybe make capital??
 	
 

@@ -34,14 +34,23 @@ bool Server::acceptConnection(sf::TcpListener& listener) {
 	// sf::TcpSocket client; // do i need to do this dynamically??
 	Client* newClient = new Client();
 
+	sf::TcpSocket client;
+
 	while (true) {
 		/*if (listener.accept(*(newClient->getSocket())) == sf::Socket::Done) {
 				cout << "A new client just connected from " << (newClient->getSocket())->sf::TcpSocket::getRemoteAddress() << endl;
 				this->mClientVector.push_back(newClient);
 			}*/
-		if (listener.accept((newClient->getRefSocket())) == sf::Socket::Done) {
+		/*if (listener.accept((newClient->getRefSocket())) == sf::Socket::Done) {
 			cout << "A new client just connected from " << (newClient->getSocket())->sf::TcpSocket::getRemoteAddress() << endl;
 			this->mClientVector.push_back(newClient);
+		}*/
+		if (listener.accept(client) == sf::Socket::Done) {
+			cout << "A new client just connected from " << client.sf::TcpSocket::getRemoteAddress() << endl;
+			//this->mClientVector.push_back(newClient);
+		}
+		else {
+			cout << " it tried " << endl;
 		}
 	}
 
