@@ -3,6 +3,7 @@
 #include <SFML/Network.hpp>
 #include "Client.hpp"
 
+
 #include <iostream>
 #include <vector>
 
@@ -20,17 +21,52 @@ using std::endl;
 
 // or PORT 55001??
 
+/// <summary> good resource : https://github.com/techwithtim/Agar-IO
+///  data in python looked like : players[current_id] = {"x":x, "y":y,"color":color,"score":0,"name":name}
+/// 
+/// 
+///	if data.split(" ")[0] == "move":
+			//split_data = data.split(" ")
+			//x = int(split_data[1])
+			//y = int(split_data[2])
+			//players[current_id]["x"] = x
+			//players[current_id]["y"] = y
+			//
+			//# only check for collison if the game has started
+			//if start:
+			//check_collision(players, balls)
+			//player_collision(players)
+			//
+			//# if the amount of balls is less than 150 create more
+			//if len(balls) < 150 :
+			//	create_balls(balls, random.randrange(100, 150))
+			//	print("[GAME] Generating more orbs")
+			//
+			//	send_data = pickle.dumps((balls, players, game_time))
+
+/// 
+/// </summary>
 
 class Server
 {
-public:
-	Server(int nPlayers = 1, bool gActive = false); // should nPlayers defualt to 1 or 0??
+public: // the server will have the mId = 0; it probably wont be used much, if not ever, but it is reserved for the server
+	Server(int nPlayers = 0, bool gActive = false); // should nPlayers defualt to 1 or 0??
 
+	void run();
 
+	void lobbyOperations();
 
-	void listenForConections();
+	void runGameOperations();
+
+	bool listenForConections();
 
 	bool acceptConnection(sf::TcpListener& listener);
+
+	void sendInitInfo(Client& newClient);
+
+	void numPlayersPlusOne();
+
+	int getNumPlayers() { return this->mNumberOfPlayers; }
 
 	// void runServer(); // will contain all stuff
 

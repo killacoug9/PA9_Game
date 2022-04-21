@@ -12,19 +12,67 @@ Server::Server(int nPlayers, bool gActive) {
 	cout << "The servers IP is " << sf::IpAddress::getLocalAddress() << endl;// might need to do sf::IpAddress::getLocalAddress().toString()
 }
 
+void Server::run() {
+	bool inLobby = true;
+	bool keepListening = true;
+
+	while (inLobby && keepListening) {
+		keepListening = this->listenForConections();
+
+	}
+	
+	// once we have all the connections.. when the game mstart is initiated we will go into second stage
+
+
+}
 
 
 
-void Server::listenForConections(){
+void Server::lobbyOperations() {
+
+
+
+}
+
+void Server::runGameOperations() {
+
+}
+
+bool Server::listenForConections(){
 	sf::TcpListener listenerSocket;
 	listenerSocket.listen(SERVER_PORT);
 
 	acceptConnection(listenerSocket);
+	return false; // will need to be changed later
 }
 
 // return the true if the socket got connected succesfully
 bool Server::acceptConnection(sf::TcpListener& listener) {
 	// this is Tcp rn
+
+	/*	Client* newClient = new Client();
+
+	sf::TcpSocket client;
+
+	while (true) {
+		/*if (listener.accept(*(newClient->getSocket())) == sf::Socket::Done) {
+				cout << "A new client just connected from " << (newClient->getSocket())->sf::TcpSocket::getRemoteAddress() << endl;
+				this->mClientVector.push_back(newClient);
+			}
+		/*if (listener.accept((newClient->getRefSocket())) == sf::Socket::Done) {
+			cout << "A new client just connected from " << (newClient->getSocket())->sf::TcpSocket::getRemoteAddress() << endl;
+			this->mClientVector.push_back(newClient);
+		}
+
+	if (listener.accept(client) == sf::Socket::Done) {
+		logl("A new client just connected from " << client.sf::TcpSocket::getRemoteAddress());
+
+		this->mClientVector.push_back(newClient);
+	}
+	else {
+		logl("A new client didnt connect");
+	}
+}*/
 
 	// sf::TcpSocket client; // do i need to do this dynamically??
 	Client* newClient = new Client();
@@ -40,9 +88,14 @@ bool Server::acceptConnection(sf::TcpListener& listener) {
 			cout << "A new client just connected from " << (newClient->getSocket())->sf::TcpSocket::getRemoteAddress() << endl;
 			this->mClientVector.push_back(newClient);
 		}*/
-		if (listener.accept(client) == sf::Socket::Done) {
-			logl("A new client just connected from " << client.sf::TcpSocket::getRemoteAddress());
+		if (listener.accept(newClient->getSocket()) == sf::Socket::Done) {
+			logl("A new client just connected from " << newClient->getSocket().sf::TcpSocket::getRemoteAddress()); // displays the clients Ip
+			this->numPlayersPlusOne();
+			newClient->setId(this->mNumberOfPlayers);
+			
 			this->mClientVector.push_back(newClient);
+			sendInitInfo(*newClient);
+			break;
 		}
 		else {
 			logl("A new client didnt connect");
@@ -50,4 +103,14 @@ bool Server::acceptConnection(sf::TcpListener& listener) {
 	}
 
 	return true;
+}
+
+void Server::sendInitInfo(Client& newClient) {
+	sf::Packet newPacket;
+	newPacket << 0 << newClient.getId() << false; // zero because the server ID is 0
+	newClient.getSocket().send(newPacket);
+}
+
+void Server::numPlayersPlusOne() {
+	this->mNumberOfPlayers += 1;
 }

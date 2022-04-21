@@ -5,6 +5,7 @@
 //                a circle in the window.
 
 #include <SFML/Graphics.hpp>
+#include <fstream>
 #include "Client.hpp"
 #include "Server.hpp"
 
@@ -47,9 +48,12 @@ int main()
 
 	Server server;
 	Client clientObj;
-	sf::TcpSocket socket;
+	//sf::TcpSocket socket;
 
-	//sf::Thread threadListen(&(socket.connect), SERVER_LOCAL_IP, SERVER_PORT);
+	bool isHost = false;
+
+	std::fstream outfile;
+	outfile.open("log.txt");
 
 	//sf::Thread thread(&Server::listenForConections, &socket);
 	//// /*sf::Thread thread([]() {
@@ -57,16 +61,47 @@ int main()
 	//	});*/
 	
 	// This works too
-	sf::Thread thread(&Server::listenForConections, &server); // works?
-	thread.launch();
-	clientObj.connect(SERVER_LOCAL_IP, SERVER_PORT);
+	//sf::Thread thread(&Server::listenForConections, &server); // works?
+	//thread.launch();
+	//clientObj.connect(SERVER_LOCAL_IP, SERVER_PORT);
 
 
 	//socket.connect(SERVER_LOCAL_IP, SERVER_PORT);
 	//logl("is this working"); // this doesnt need a semi colon???!??!?!?!?!?!??!?!?!?!??!?!?!?!?!??!?!?!?!??!?!?!?!?!?!?!?
 
-	//clientObj.connect(SERVER_LOCAL_IP, SERVER_PORT);
 
+	
+	/* --- when event triggers that they clicked %Host% --- */
+	if (true) {
+		isHost = true;
+
+		Server serverObj;
+
+		sf::Thread thread(&Server::run, &serverObj); // works?
+		thread.launch(); // this runs the listen for connctions -> accept connections -> sendInitInfo
+		//clientObj.connect(SERVER_LOCAL_IP, SERVER_PORT); // not scalable but will work for now.
+		clientObj.joinHost();
+		// possiblyshow host menu screen?
+	}
+	
+		
+	if (isHost) { // this is where u show what scrren they are looking at?? whether they are looking at the host menu screen or the joiner screen
+		
+		//Server serverObj;
+		////sf::Thread thread(&Server::listenForConections, &serverObj); // works?
+		//sf::Thread thread(&Server::run, &serverObj); // works?
+		//thread.launch();
+		//clientObj.connect(SERVER_LOCAL_IP, SERVER_PORT); // not scalable but will work for now.
+		//
+
+
+	}
+	else {
+		// if click join
+		clientObj;
+	}
+
+	
 
 	/* WORKS!!!
 	sf::TcpListener listener;
