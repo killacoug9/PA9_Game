@@ -12,7 +12,19 @@ Server::Server(int nPlayers, bool gActive) {
 	cout << "The servers IP is " << sf::IpAddress::getLocalAddress() << endl;// might need to do sf::IpAddress::getLocalAddress().toString()
 }
 
+Server::~Server() {
+	for (int i = 0; i < this->mClientVector.size(); i++)
+	{
+		delete this->mClientVector.at(i);
+	}
+	logl("Deleted Server Obj");
+}
+
 void Server::run() {
+	//sf::Mutex mutex;
+
+	//mutex.lock();
+
 	bool inLobby = true;
 	bool keepListening = true;
 
@@ -23,7 +35,7 @@ void Server::run() {
 	
 	// once we have all the connections.. when the game mstart is initiated we will go into second stage
 
-
+	//mutex.unlock();
 }
 
 
@@ -107,8 +119,10 @@ bool Server::acceptConnection(sf::TcpListener& listener) {
 
 void Server::sendInitInfo(Client& newClient) {
 	sf::Packet newPacket;
-	newPacket << 0 << newClient.getId() << false; // zero because the server ID is 0
-	newClient.getSocket().send(newPacket);
+	sf::Uint8 serverId = 0;
+	newPacket << serverId << newClient.getId() << false << "You got initilized!!!"; // zero because the server ID is 0
+	//newClient.getSocket().send(newPacket);
+	newClient.sendPacket(newPacket);
 }
 
 void Server::numPlayersPlusOne() {

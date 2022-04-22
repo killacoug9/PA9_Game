@@ -46,11 +46,14 @@ using std::endl;
 
 /// 
 /// </summary>
+/// 
 
 class Server
 {
 public: // the server will have the mId = 0; it probably wont be used much, if not ever, but it is reserved for the server
 	Server(int nPlayers = 0, bool gActive = false); // should nPlayers defualt to 1 or 0??
+
+	~Server();
 
 	void run();
 
@@ -91,7 +94,7 @@ private:
 *It was silly of me not to mention this option in the last post.
 */
 	// vector<std::unique_ptr<sf::TcpSocket>> sockets; // another possible way to store a vector of Sockets
-	int mNumberOfPlayers;
+	sf::Uint8 mNumberOfPlayers; // made to uint from int
 	bool mGameActive;
 
 

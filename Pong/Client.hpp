@@ -6,6 +6,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <stdexcept>
+//#include <exception>
 
 using std::vector;
 using std::cout;
@@ -38,7 +40,8 @@ public:
 	// will tell the client if a new person joined their lobby
 	void checkForNewPlayerConnected();
 
-	void setId(sf::Uint8 temp) { this->mId = temp; }
+	void setId(sf::Uint8& temp) { this->mId = temp; } // put a &here, idk why
+
 
 	sf::Uint8 getId() { return this->mId; }
 

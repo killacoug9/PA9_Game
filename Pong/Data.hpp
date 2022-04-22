@@ -18,12 +18,14 @@ class Data
 
 public: // fuck it, imm just make it public because i dont wanna deal with setters and getter rn.. can change later
 	Data(sf::Packet& packet) {
-		if (packet >> mSenderId >> mRecipientId >> mMessage) {
+		packet >> mSenderId >> mRecipientId >> mGameActive >> mMessage;
+		//if (packet >> mSenderId >> mRecipientId >> mGameActive >> mMessage) {
 
-		}
-		else {
-			logl("The data couldnt be de-serialized");
-		}
+		//}
+		//else {
+		//	logl("The data couldnt be de-serialized");
+		//	//throw std::runtime_error("The data couldnt be de-serialized");
+		//}
 		
 	}
 

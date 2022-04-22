@@ -26,12 +26,26 @@ void runGame();
 //((this->mSocketR)->connect())
 //if (((*mSocket))->connect(ip, port) != sf::Socket::Done) {
 void Client::connect(const char* ip, unsigned short port) {
+
+	//try { // getting a break here for some reason
+	//	if (this->mSocket.connect(ip, port) != sf::Socket::Done) {
+	//		logl("Could not connect to the server");
+	//	}
+	//	else {
+	//		cout << "Connected to the server" << endl; // getting a breakpoint here when using logl();
+	//	}
+	//	
+	//}
+	//catch (...) {
+	//	cout << "Exception thrown int the connect func" << endl;
+	//}
 	if (this->mSocket.connect(ip, port) != sf::Socket::Done) {
 		logl("Could not connect to the server");
 	}
 	else {
-		logl("Connected to the server");
+		cout << "Connected to the server" << endl; // getting a breakpoint here when using logl();
 	}
+
 } // 
 
 void Client::sendPacket(sf::Packet& packet) {
@@ -60,11 +74,19 @@ void Client::joinHost(unsigned short port) {
 	std::string str;
 	cout << "please type in the IP address of the host" << endl;
 	//std::getline(std::cin, tempIp);
+	std::cin.clear();
 	std::getline(std::cin, str);
 
-	this->connect(str.c_str(), port);
+	if (str != "...") { // this is to speed up debugging
+		this->connect(str.c_str(), port);
+	}
+	else {
+		
+		this->connect("10.219.207.40", port);
+	}
 
 	this->recieveStartInfo();
+	cout << "here" << endl;
 }
 
 void Client::recieveStartInfo() {
@@ -75,13 +97,23 @@ void Client::recieveStartInfo() {
 			logl("Couldnt get the init info");
 		}
 		else {
-			
-			Data data(packet);
-			//packet >> 0 >> newClient.getId() >> false;
-			this->mId = data.mRecipientId;
-			this->lastPacket = packet;
-			logl("Client: The client recieved the init info");
-			logl("The Id is " << this->mId);
+			Data data(packet);// this fixed my first read access violation// moving it from in tyr to out of try
+			try {
+				
+				//packet >> 0 >> newClient.getId() >> false;
+				this->mId = data.mRecipientId;
+				this->lastPacket = packet;
+				logl("Client: The client recieved the init info");
+				logl("The Id is " << (unsigned int)this->mId); // https://www.reddit.com/r/cpp/comments/t754ez/exception_transition_vso1269037_visual_studio_2019/
+				cout << "sumn" << endl;
+			}
+			catch (std::runtime_error& e) {
+				logl("Runtime Exception: " << e.what() << " thrown.");
+			}
+			catch (std::exception& e1) {
+				logl("General Exception: " << e1.what() << " thrown.");
+			}
+			logl("here before");
 			break;
 		}
 	}
