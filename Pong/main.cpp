@@ -24,8 +24,9 @@
 
 // someone will be host(preferably beefy computer), and the host will have server and client, others will jsut have client
 #define SERVER_LOCAL_IP "10.219.207.40"
+#define DEFAULT_START_TIME 10
 
-sf::Mutex mutex;
+std::fstream outfile; // global scope cuzz fucc it why not
 
 int main()
 {
@@ -48,7 +49,6 @@ int main()
 		window.draw(shape);
 		window.display();
 	}*/
-	
 
 	//Server server;
 	Client clientObj;
@@ -56,7 +56,7 @@ int main()
 
 	bool isHost = false;
 
-	std::fstream outfile;
+	
 	outfile.open("log.txt");
 
 	//sf::Thread thread(&Server::listenForConections, &socket);
@@ -88,12 +88,8 @@ int main()
 				sf::Thread thread(&Server::run, &serverObj); // works?
 				thread.launch(); // this runs the listen for connctions -> accept connections -> sendInitInfo
 
-				//mutex.lock();
-
 				//clientObj.connect(SERVER_LOCAL_IP, SERVER_PORT); // not scalable but will work for now.
 				clientObj.joinHost();
-
-				//mutex.unlock();
 
 				// possiblyshow host menu screen?
 				thread.wait();
@@ -102,25 +98,20 @@ int main()
 				cout << "Caught an exception in main" << endl;
 			}
 			//isHost = true;
-
 			//Server serverObj;
-
 			//sf::Thread thread(&Server::run, &serverObj); // works?
 			//thread.launch(); // this runs the listen for connctions -> accept connections -> sendInitInfo
-
 			////mutex.lock();
-
 			////clientObj.connect(SERVER_LOCAL_IP, SERVER_PORT); // not scalable but will work for now.
 			//clientObj.joinHost();
-
 			////mutex.unlock();
-
 			//// possiblyshow host menu screen?
 			//thread.wait();
 		}
 	}
 	else {
-		cout << "are you the host??" << endl;
+		
+		cout << "are you the host?? : ";// << endl; // put this here to see if it stops my error where it wouldnt let me insert server IP
 		std::cin >> input;
 		if (input == 'y') {
 			Server serverObj;
@@ -129,7 +120,8 @@ int main()
 
 		}
 		else {
-			clientObj.joinHost();
+			clientObj.run();
+			//clientObj.joinHost();
 		}
 	}
 

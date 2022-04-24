@@ -201,7 +201,7 @@ public:
     /// \see setCenter, rotate, zoom
     ///
     ////////////////////////////////////////////////////////////
-    void move(float offsetX, float offsetY);
+    void mMove(float offsetX, float offsetY);
 
     ////////////////////////////////////////////////////////////
     /// \brief Move the view relatively to its current position
@@ -211,7 +211,7 @@ public:
     /// \see setCenter, rotate, zoom
     ///
     ////////////////////////////////////////////////////////////
-    void move(const Vector2f& offset);
+    void mMove(const Vector2f& offset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Rotate the view relatively to its current orientation
