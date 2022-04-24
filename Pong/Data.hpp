@@ -24,15 +24,22 @@ using std::endl;
 class Data
 {
 	// can use sf::getDataSize() on the packet to see if its a lobby poacket or game packet??
-
 public: // fuck it, imm just make it public because i dont wanna deal with setters and getter rn.. can change later
 	
-	Data() {
-		this->mSenderId = 65535; //  65535 is the max value
-		this->mRecipientId = 65535; // 65535
-		this->mGameActive = false;
-		this->mMessage = "The default constructor did this";
+	Data(sf::Uint16 SenderId = 65535, sf::Uint16 RecipientId = 65535, bool GameActive = false , std::string Message = "", sf::String temp = "") {
+		this->mSenderId = SenderId; 
+		this->mRecipientId = RecipientId; 
+		this->mGameActive = GameActive;
+		this->mMessage = Message;
+		this->temp = temp;
 	}
+
+	//Data() {
+	//	this->mSenderId = 65535; //  65535 is the max value
+	//	this->mRecipientId = 65535; // 65535
+	//	this->mGameActive = false;
+	//	this->mMessage = "The default constructor did this";
+	//}
 	
 	Data(sf::Packet& packet) {
 		this->parse(packet);
@@ -72,4 +79,10 @@ public: // fuck it, imm just make it public because i dont wanna deal with sette
 sf::Packet& operator<<(sf::Packet& lhs, Data& rhs) {
 	lhs << rhs.mSenderId << rhs.mRecipientId << rhs.mGameActive << rhs.temp;
 	return lhs;
+}
+
+Data& operator>>(sf::Packet& lhs, Data& rhs) {
+	lhs >> rhs.mSenderId >> rhs.mRecipientId >> rhs.mGameActive >> rhs.temp;
+
+	return rhs;
 }

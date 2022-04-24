@@ -50,11 +50,9 @@ void Server::run() {
 	}
 
 	///; ------------- On Event(host clicks start) ------------
-	LobbyData data;
-	
+	LobbyData data = LobbyData(true, DEFAULT_START_TIME, mNumberOfPlayers, SERVER_ID);
 
-
-	messageAllClients(); // send a lobby packet saying the game is about to starts;
+	messageAllClients(&data); // send a lobby packet saying the game is about to starts;
 
 
 	

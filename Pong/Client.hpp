@@ -2,8 +2,10 @@
 
 #include <SFML/Network.hpp>
 #include <SFML/System.hpp>
+
 #include "GameData.hpp"
 #include "LobbyData.hpp"
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -24,6 +26,7 @@ using std::endl;
 #define SERVER_PORT 53000
 #define logl(x) cout << x << endl;
 #define sysin(x, y) { cout << x << " : "; std::cin.ignore(); std::getline(std::cin, y); }; // I love this stuff
+#define SERVER_ID 0
 
 class Client {
 public:

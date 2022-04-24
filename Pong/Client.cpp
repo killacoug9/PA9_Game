@@ -38,16 +38,18 @@ void Client::run() {
 		//packetRecieved = false; // so it resets each loop
 
 		// recieve packet
-		LobbyData data();
+		LobbyData data;
 		try {
 			//packetRecieved = recievePacket(packet);
 
 			if (recievePacket(packet)) {// if server sent a lobby packet
 				// lobby data here
 				this->lastPacket = packet;
-				
+				packet >> data;
 
-
+				if (data.mIsGameStarting) {  // could do something here but idrk yet
+					//data.mTimeTillStart;
+				}
 			}
 		}
 		catch (std::runtime_error& e) {
@@ -56,12 +58,21 @@ void Client::run() {
 		
 
 
-		// display screen // (screen possibly has a timer at top?)
+		// display screen // (screen possibly has a timer at top based off time till start?)
 
+
+		// if game started then 
+		if (data.mIsGameStarting && data.mTimeTillStart <= 0) {  // could do something here but idrk yet
+			break;
+		}
 
 	} while (true);
 
+
 	// load match
+
+	
+
 
 }
 

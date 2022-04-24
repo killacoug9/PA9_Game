@@ -7,7 +7,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <fstream>
-#include "Client.hpp"
+
+//#include "Client.hpp"
 #include "Server.hpp"
 
 #define WINDOW_WIDTH 1000
@@ -24,7 +25,7 @@
 
 // someone will be host(preferably beefy computer), and the host will have server and client, others will jsut have client
 #define SERVER_LOCAL_IP "10.219.207.40"
-#define DEFAULT_START_TIME 10
+
 
 std::fstream outfile; // global scope cuzz fucc it why not
 
