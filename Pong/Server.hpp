@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <vector>
+#include <functional>
+#include <thread>
 
 using std::vector;
 using std::cout;
@@ -16,8 +18,12 @@ using std::endl;
 // selector.wait()
 // once a selector returns true it means something has data ready but it doesnt tell you which.. must use isReady() on each socket to see which is ready
 
-#define SERVER_PORT 53000
+// info on blocking vs non-blocking sockets // https://www.developerfusion.com/article/28/introduction-to-tcpip/8/
+
+//#define SERVER_PORT 53000
 //#define logl(x) cout << x << endl; // im mind blown rn // source:: "Making a basic Multi_Client Chat Appl. Using SFML and C++(...)"
+
+// do i make it so they can click host and they host a server?, or have sevrer completely seperate.. so you would start the server manually, and thye would join..
 
 // or PORT 55001??
 
@@ -46,17 +52,24 @@ using std::endl;
 
 /// 
 /// </summary>
+/// 
+
+
 
 class Server
 {
 public: // the server will have the mId = 0; it probably wont be used much, if not ever, but it is reserved for the server
-	Server(int nPlayers = 0, bool gActive = false); // should nPlayers defualt to 1 or 0??
+	Server(int nPlayers = 0, bool gActive = false, bool gameJoinable = true); // should nPlayers defualt to 1 or 0??
 
+	~Server();
+	
 	void run();
 
 	void lobbyOperations();
 
 	void runGameOperations();
+
+	void letPeopleJoin(bool& allowJoin);
 
 	bool listenForConections();
 
@@ -67,6 +80,13 @@ public: // the server will have the mId = 0; it probably wont be used much, if n
 	void numPlayersPlusOne();
 
 	int getNumPlayers() { return this->mNumberOfPlayers; }
+
+	void onClientConnect(Client*& newClient);
+
+	void messageAllClients(Data* data);
+
+//	void messageAllClients(LobbyData& data);
+
 
 	// void runServer(); // will contain all stuff
 
@@ -91,9 +111,9 @@ private:
 *It was silly of me not to mention this option in the last post.
 */
 	// vector<std::unique_ptr<sf::TcpSocket>> sockets; // another possible way to store a vector of Sockets
-	int mNumberOfPlayers;
+	sf::Uint16 mNumberOfPlayers; // made to uint from int
 	bool mGameActive;
-
+	bool mGameJoinable;
 
 
 

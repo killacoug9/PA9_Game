@@ -220,7 +220,7 @@ public:
     /// \see setPosition
     ///
     ////////////////////////////////////////////////////////////
-    void move(float offsetX, float offsetY);
+    void mMove(float offsetX, float offsetY);
 
     ////////////////////////////////////////////////////////////
     /// \brief Move the object by a given offset
@@ -237,7 +237,7 @@ public:
     /// \see setPosition
     ///
     ////////////////////////////////////////////////////////////
-    void move(const Vector2f& offset);
+    void mMove(const Vector2f& offset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Rotate the object

@@ -5,8 +5,10 @@
 //                a circle in the window.
 
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include <fstream>
-#include "Client.hpp"
+
+//#include "Client.hpp"
 #include "Server.hpp"
 
 #define WINDOW_WIDTH 1000
@@ -23,6 +25,9 @@
 
 // someone will be host(preferably beefy computer), and the host will have server and client, others will jsut have client
 #define SERVER_LOCAL_IP "10.219.207.40"
+
+
+std::fstream outfile; // global scope cuzz fucc it why not
 
 int main()
 {
@@ -46,13 +51,13 @@ int main()
 		window.display();
 	}*/
 
-	Server server;
+	//Server server;
 	Client clientObj;
 	//sf::TcpSocket socket;
 
 	bool isHost = false;
 
-	std::fstream outfile;
+	
 	outfile.open("log.txt");
 
 	//sf::Thread thread(&Server::listenForConections, &socket);
@@ -68,21 +73,63 @@ int main()
 
 	//socket.connect(SERVER_LOCAL_IP, SERVER_PORT);
 	//logl("is this working"); // this doesnt need a semi colon???!??!?!?!?!?!??!?!?!?!??!?!?!?!?!??!?!?!?!??!?!?!?!?!?!?!?
+	char input;
+	cout << "are you using militthreading?? (y/n)" << endl;
+	std::cin >> input;
 
+	if (input == 'y') {
+		/* --- when event triggers that they clicked %Host% --- */
+		if (true) {
 
-	
-	/* --- when event triggers that they clicked %Host% --- */
-	if (true) {
-		isHost = true;
+			try {
+				isHost = true;
 
-		Server serverObj;
+				Server serverObj;
 
-		sf::Thread thread(&Server::run, &serverObj); // works?
-		thread.launch(); // this runs the listen for connctions -> accept connections -> sendInitInfo
-		//clientObj.connect(SERVER_LOCAL_IP, SERVER_PORT); // not scalable but will work for now.
-		clientObj.joinHost();
-		// possiblyshow host menu screen?
+				sf::Thread thread(&Server::run, &serverObj); // works?
+				thread.launch(); // this runs the listen for connctions -> accept connections -> sendInitInfo
+
+				//clientObj.connect(SERVER_LOCAL_IP, SERVER_PORT); // not scalable but will work for now.
+				clientObj.joinHost();
+
+				// possiblyshow host menu screen?
+				thread.wait();
+			}
+			catch (...) {
+				cout << "Caught an exception in main" << endl;
+			}
+			//isHost = true;
+			//Server serverObj;
+			//sf::Thread thread(&Server::run, &serverObj); // works?
+			//thread.launch(); // this runs the listen for connctions -> accept connections -> sendInitInfo
+			////mutex.lock();
+			////clientObj.connect(SERVER_LOCAL_IP, SERVER_PORT); // not scalable but will work for now.
+			//clientObj.joinHost();
+			////mutex.unlock();
+			//// possiblyshow host menu screen?
+			//thread.wait();
+		}
 	}
+	else {
+		
+		cout << "are you the host?? : ";// << endl; // put this here to see if it stops my error where it wouldnt let me insert server IP
+		std::cin >> input;
+		if (input == 'y') {
+			Server serverObj;
+
+			serverObj.run();
+
+		}
+		else {
+			clientObj.run();
+			//clientObj.joinHost();
+		}
+	}
+
+	cout << "out of loop in main" << endl;
+	
+	
+
 	
 		
 	if (isHost) { // this is where u show what scrren they are looking at?? whether they are looking at the host menu screen or the joiner screen
@@ -98,7 +145,7 @@ int main()
 	}
 	else {
 		// if click join
-		clientObj;
+		//clientObj;
 	}
 
 	
