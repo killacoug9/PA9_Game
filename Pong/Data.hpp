@@ -74,15 +74,10 @@ public: // fuck it, imm just make it public because i dont wanna deal with sette
 	bool mGameActive; // will tell them when to make game screen // conditional
 	std::string mMessage; // random for testing
 	sf::String temp;
+
+
 };
 
-sf::Packet& operator<<(sf::Packet& lhs, Data& rhs) {
-	lhs << rhs.mSenderId << rhs.mRecipientId << rhs.mGameActive << rhs.temp;
-	return lhs;
-}
+sf::Packet& operator<<(sf::Packet& lhs, Data& rhs);
 
-Data& operator>>(sf::Packet& lhs, Data& rhs) {
-	lhs >> rhs.mSenderId >> rhs.mRecipientId >> rhs.mGameActive >> rhs.temp;
-
-	return rhs;
-}
+Data& operator>>(sf::Packet& lhs, Data& rhs);

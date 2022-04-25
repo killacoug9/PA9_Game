@@ -50,7 +50,9 @@ void Server::run() {
 	}
 
 	///; ------------- On Event(host clicks start) ------------
-	LobbyData data = LobbyData(true, DEFAULT_START_TIME, mNumberOfPlayers, SERVER_ID);
+	//LobbyData data = LobbyData(true, DEFAULT_START_TIME, mNumberOfPlayers, SERVER_ID);
+	LobbyData data(true, DEFAULT_START_TIME, mNumberOfPlayers, SERVER_ID);
+	//Data* data = new LobbyData(true, DEFAULT_START_TIME, mNumberOfPlayers, SERVER_ID);
 
 	messageAllClients(&data); // send a lobby packet saying the game is about to starts;
 
@@ -164,7 +166,7 @@ void Server::onClientConnect(Client*& newClient) { // a option message when some
 	logl("[SERVER] New Connection from : " << newClient->getSocket().sf::TcpSocket::getRemoteAddress()); // displays the clients Ip
 }
 
-// data* so that not only can i use polymorphism, but also so that i can change the packet data between who isend it to
+ //data* so that not only can i use polymorphism, but also so that i can change the packet data between who isend it to
 void Server::messageAllClients(Data* data) {
 
 	sf::Packet packet;
@@ -172,10 +174,30 @@ void Server::messageAllClients(Data* data) {
 	for (int i = 0; i < this->mClientVector.size(); i++)
 	{
 		data->mRecipientId = this->mClientVector.at(i)->getId();
-		packet << *data;
+
+		packet << data; // this is so annyoing
+		//packet << data->mSenderId << data->mRecipientId << data->mGameActive << data->temp;
+
 		this->mClientVector.at(i)->sendPacket(packet);
 	}
 }
+
+////data* so that not only can i use polymorphism, but also so that i can change the packet data between who isend it to
+//void Server::messageAllClients(LobbyData& data) {
+//
+//	sf::Packet packet;
+//
+//	for (int i = 0; i < this->mClientVector.size(); i++)
+//	{
+//		data.mRecipientId = this->mClientVector.at(i)->getId();
+//
+//		packet << data; // this is so annyoing
+//		//packet << data->mSenderId << data->mRecipientId << data->mGameActive << data->temp;
+//
+//		this->mClientVector.at(i)->sendPacket(packet);
+//	}
+//}
+
 
 void Server::numPlayersPlusOne() {
 	this->mNumberOfPlayers += 1;

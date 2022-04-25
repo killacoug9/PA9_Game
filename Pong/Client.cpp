@@ -47,6 +47,7 @@ void Client::run() {
 				this->lastPacket = packet;
 				packet >> data;
 
+
 				if (data.mIsGameStarting) {  // could do something here but idrk yet
 					//data.mTimeTillStart;
 				}

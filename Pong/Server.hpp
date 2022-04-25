@@ -85,6 +85,9 @@ public: // the server will have the mId = 0; it probably wont be used much, if n
 
 	void messageAllClients(Data* data);
 
+//	void messageAllClients(LobbyData& data);
+
+
 	// void runServer(); // will contain all stuff
 
 private:

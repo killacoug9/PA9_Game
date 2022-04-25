@@ -33,6 +33,22 @@ public:
 
     }
     
+    void parse(sf::Packet& packet) {
+        Data::parse(packet);
+        this->mMessage = "";
+        if (packet >> mIsGameStarting >> mTimeTillStart >> mNumPlayers) {
+            for (int i = 0; i < this->temp.getSize(); i++) {
+
+                this->mMessage += (char)(*(this->temp.getData() + i));
+                //this->mMessage = temp;
+            }
+        }
+        else {
+            logl("The data couldnt be de-serialized");
+            //throw std::runtime_error("The data couldnt be de-serialized");
+        }
+
+    }
 
     // this is subject to change
     bool mIsGameStarting;
@@ -40,16 +56,9 @@ public:
     sf::Uint16 mNumPlayers;
 };
 
-sf::Packet& operator<<(sf::Packet& lhs, LobbyData& rhs) {
-    lhs << rhs.mSenderId << rhs.mRecipientId << rhs.mGameActive << rhs.temp << rhs.mIsGameStarting << rhs.mTimeTillStart << rhs.mNumPlayers;
-    return lhs;
-}
+sf::Packet& operator<<(sf::Packet& lhs, LobbyData& rhs);
 
-LobbyData& operator>>(sf::Packet& lhs, LobbyData& rhs) {
-    lhs >> rhs.mSenderId >> rhs.mRecipientId >> rhs.mGameActive >> rhs.temp >> rhs.mIsGameStarting >> rhs.mTimeTillStart >> rhs.mNumPlayers;
-
-    return rhs;
-}
+sf::Packet& operator>>(sf::Packet& lhs, LobbyData& rhs);
 
 
 
