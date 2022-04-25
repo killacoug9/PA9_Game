@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "Client.hpp"
+#include "Client.hpp"
 
 // this will be where the screens are so the displayHost screen, displayJoinScreen, play game etc..
 

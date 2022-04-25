@@ -33,20 +33,16 @@ void Client::run() {
 	
 	// ~~~~~~ this is just running(waiting) till game starts ~~~~
 	sf::Packet packet;
-	//bool packetRecieved = false;
+
 	do {
-		//packetRecieved = false; // so it resets each loop
 
 		// recieve packet
 		LobbyData data;
 		try {
-			//packetRecieved = recievePacket(packet);
-
-			if (recievePacket(packet)) {// if server sent a lobby packet
-				// lobby data here
+			if (recievePacket(packet)) {	// if server sent a lobby packet
+				
 				this->lastPacket = packet;
 				packet >> data;
-
 
 				if (data.mIsGameStarting) {  // could do something here but idrk yet
 					//data.mTimeTillStart;
