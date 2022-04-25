@@ -101,6 +101,8 @@ public:
 
         sprite.setPosition(pos);
     }
+
+
 private:
     static constexpr float speed = 100.0;
     sf::Vector2f pos;
@@ -108,4 +110,5 @@ private:
     sf::Sprite sprite;
     Animation animations[int(AnimationIndex::Count)];
     AnimationIndex curAnimation = AnimationIndex::WalkingDown;
+
 };

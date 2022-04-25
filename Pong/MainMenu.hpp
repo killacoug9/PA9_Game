@@ -8,6 +8,14 @@
 #define WINDOW_WIDTH 960
 #define WINDOW_HEIGHT 540
 
+enum Direction {
+	North,
+	East,
+	South,
+	West
+};
+
+
 class MainMenu {
 public:
 	MainMenu(float width, float height);
@@ -23,6 +31,10 @@ public:
 	void runMenuScreen(sf::RenderWindow& window, sf::Event& event);
 
 	sf::RectangleShape& getBackgroundPicture() { return background; }
+
+	void drawOtherPlayers(sf::RenderWindow& window);
+
+	void updateOtherPlayers();
 
 	~MainMenu();
 private:
