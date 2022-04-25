@@ -10,9 +10,10 @@
 
 //#include "Client.hpp"
 #include "Server.hpp"
+#include "MainMenu.hpp"
 
-#define WINDOW_WIDTH 1000
-#define WINDOW_HEIGHT 800
+//#define WINDOW_WIDTH 960
+//#define WINDOW_HEIGHT 540
 
 // screen is blacked out for x seconds while hiders hide...
 
@@ -31,25 +32,42 @@ std::fstream outfile; // global scope cuzz fucc it why not
 
 int main()
 {
-	/*
-	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game!");
-	sf::CircleShape shape(100.f);
 
-	shape.setFillColor(sf::Color::Green);
+	//	const int WINDOW_WIDTH = 960; // change in MainMenu.hpp
+	//	const int WINDOW_HEIGHT = 540;
 
-	while (window.isOpen())
-	{
+		//make a window
+	sf::RenderWindow HomeScreenWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Main Menu", sf::Style::Default);
+
+	MainMenu menuButtons(HomeScreenWindow.getSize().x, HomeScreenWindow.getSize().y);
+
+	////photo to main menu background
+
+
+
+
+	while (HomeScreenWindow.isOpen()) {
 		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				window.close();
-		}
+		menuButtons.runMenuScreen(HomeScreenWindow, event);
 
-		window.clear();
-		window.draw(shape);
-		window.display();
-	}*/
+		HomeScreenWindow.clear();
+		HomeScreenWindow.draw(menuButtons.getBackgroundPicture());
+		menuButtons.drawTextButtons(HomeScreenWindow);
+		HomeScreenWindow.display();
+}
+
+	
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 	//Server server;
 	Client clientObj;
@@ -149,33 +167,86 @@ int main()
 	}
 
 	
-
-	/* WORKS!!!
-	sf::TcpListener listener;
-	sf::TcpSocket client;
-
-	listener.listen(SERVER_PORT);
-
-	
-	socket.connect(SERVER_LOCAL_IP, SERVER_PORT);
-
-	server.acceptConnection(listener);
-*/	
-
-		//if (listener.accept(client) == sf::Socket::Done) {
-		//	cout << "A new client just connected from " << client.sf::TcpSocket::getRemoteAddress() << endl;
-		//	//this->mClientVector.push_back(newClient);
-		//}
-		//else {
-		//	cout << " it tried " << endl;
-		//}
-	
+	/*
 	
 
+int main(void){
+	const int windowWidth = 960;
+	const int windowHeight = 540;
+	//make a window
+	sf::RenderWindow MENU(sf::VideoMode(windowWidth,windowHeight), "Main Menu", sf::Style::Default);
+	MainMenu mainMenu(MENU.getSize().x, MENU.getSize().y);
 
-	//server.listenForConections();
-	//client.getSocket();
+	//photo to main menu background
+	sf::RectangleShape background;
+	background.setSize(sf::Vector2f(windowWidth, windowHeight));
+	sf::Texture mainBackground;
+	mainBackground.loadFromFile("Textures/HideAndSeek.png");
+	background.setTexture(&mainBackground);
+
+
+
+	while (MENU.isOpen()) {
+		sf::Event event;
+		while (MENU.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				MENU.close();
+			}
+
+			if (event.type == sf::Event::KeyReleased) {
+				if (event.key.code == sf::Keyboard::W) {
+					mainMenu.MoveUp();
+					break;
+				}
+			}
+			if (event.type == sf::Event::KeyReleased) {
+				if (event.key.code == sf::Keyboard::S) {
+					mainMenu.MoveDown();
+					break;
+				}
+			}
+			if (event.key.code == sf::Keyboard::Return) {
+				sf::RenderWindow Host(sf::VideoMode(windowWidth, windowHeight), "Host Menu");
+				sf::RenderWindow Join(sf::VideoMode(windowWidth, windowHeight), "Join Menu");
+
+				int x = mainMenu.MainMenuPressed();
+				if (x == 0) {
+					runGame(Host, Join, windowWidth,windowHeight);
+
+				}
+				if (x == 1) {
+					while (Join.isOpen()) {
+						sf::Event aevent;
+						while (Join.pollEvent(aevent)) {
+							if (aevent.type == sf::Event::Closed) {
+								Join.close();
+							}
+
+						}
+						Host.close();
+						Join.clear();
+						Join.display();
+					}
+				}
+				if (x == 2) {
+					MENU.close();
+					break;
+				}
+			}
+
+		}
+		MENU.clear();
+		MENU.draw(background);
+		mainMenu.draw(MENU);
+		MENU.display();
+	}
+
+	return 0;
+}
 	
+	*/
+	
+
 	return 0;
 }
 

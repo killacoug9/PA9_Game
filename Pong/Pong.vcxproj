@@ -128,7 +128,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>SFML-2.5.1-windows-vc14-32-bit\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-network.lib;sfml-audio.lib;sfml-network-s-d.lib;sfml-graphics-s-d.lib;sfml-audio-s-d.lib;sfml-window-s-d.lib;sfml-system-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -155,17 +155,20 @@
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="LobbyData.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="StartMenu.cpp" />
     <ClCompile Include="PlayerEntity.cpp" />
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="character.hpp" />
     <ClInclude Include="Client.hpp" />
     <ClInclude Include="Data.hpp" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="GameData.hpp" />
     <ClInclude Include="LobbyData.hpp" />
+    <ClInclude Include="MainMenu.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="StartMenu.hpp" />
     <ClInclude Include="PlayerEntity.hpp" />
