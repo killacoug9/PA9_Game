@@ -243,48 +243,62 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 			}
 			if (this->MainMenuPressed() == 1) {
 				
-				sf::RenderWindow Join(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Join Menu");
+				//sf::RenderWindow Join(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Join Menu");
 			
 
 				
 				//clientObj.run();
 				clientObj.joinHost();
 
+				clientObj.getSocket().setBlocking(false);
+
+
 				LobbyData lData;
 				sf::Packet packet;
 				int numPlayers;
+				bool startPacketRecieved = false;
 
-				while (Join.isOpen() ) {
-					sf::Event aevent;
-					while (Join.pollEvent(aevent)) {
-						if (aevent.type == sf::Event::Closed) {
-							Join.close();
-						}
+				cout << "before loop;" << endl;
+				//while (Join.isOpen() ) {
+				while (!startPacketRecieved && lData.mTimeTillStart >= DEFAULT_START_TIME) {
+					//sf::Event aevent;
+					//while (Join.pollEvent(aevent)) {
+					//	if (aevent.type == sf::Event::Closed) {
+					//		Join.close();
+					//	}
+					//	
+					//}
 
-						
-
-					}
 					try {
-						clientObj.recievePacket(packet);
+						if (clientObj.recievePacket(packet)) {
+							cout << "packet recieved" << endl;
+							//clientObj.recievePacket(packet);
+							packet >> lData;
+
+							if (lData.mTimeTillStart <= DEFAULT_START_TIME || lData.mGameActive) {
+								numPlayers = lData.mNumPlayers;
+								cout << " i think the game startting" << endl;
+								break;
+							}
+						}
+						/*clientObj.recievePacket(packet);
 						packet >> lData;
 						if (lData.mTimeTillStart <= DEFAULT_START_TIME) {
 							numPlayers = lData.mNumPlayers;
+							cout << " i think the game startting" << endl;
 							break;
-						}
+						}*/
 					}
 					catch (std::runtime_error& e) {
-						cout << "[Client] Exception in Join recive: " << e.what() << endl;
+						//cout << "[Client] Exception in Join recive: " << e.what() << endl;
 					}
-					
-
-					Join.clear();
-					Join.display();
 
 				}
+				cout << "about to make the join ganme window" << endl;
 
 				sf::RenderWindow GameWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Host Menu");
 
-				//int numPlayers = ;
+				//ssddint numPlayers = ;
 
 				//cout << "Num players is:" << numPlayers << endl;
 
@@ -623,7 +637,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 
 		
 		// lhs << rhs.mSenderId << rhs.mRecipientId << rhs.mGameActive << rhs.temp << rhs.mMove.x << rhs.mMove.y << rhs.mPos.x << rhs.mPos.y << rhs.mIsCaught << rhs.mGamePaused;
-		GameData data({}, model.getPos(), isCaught, false, direc, client.getId(), SERVER_ID, true, "");
+		GameData data({}, model.getPos(), isCaught, false, direc, client.getId(), SERVER_ID, true, "", "");
 		sf::Packet outPacket;
 		outPacket << data;
 

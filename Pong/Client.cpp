@@ -121,7 +121,7 @@ void Client::connect(const char* ip, unsigned short port) {
 
 
 void Client::sendPacket(sf::Packet& packet) {
-	if (!(this->mSocket.isBlocking())) { // if its non-blocking then
+	if (!(this->mSocket.isBlocking()) ) { // if its non-blocking then
 		if (this->mSocket.send(packet) == sf::Socket::Partial) { // if its partial then you MUST try sending the packet agian
 			this->sendPacket(packet); // so ill send again
 		}

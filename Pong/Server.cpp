@@ -71,6 +71,12 @@ void Server::run(sf::Thread* thread) {
 	// once we have all the connections.. when the game mstart is initiated we will go into second stage
 	this->mGameActive = true;
 
+	//for (int i = 0; i < this->mClientVector.size(); i++)
+	//{
+	//	this->mClientVector.at(i)->getSocket().setBlocking(false);
+
+	//}
+
 	sf::Packet packet;
 	GameData gameDataTemp;
 	while (mGameActive) {
