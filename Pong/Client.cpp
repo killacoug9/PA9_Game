@@ -29,7 +29,7 @@ void Client::run() {
 	if (true) 
 		this->joinHost(); // this joins and get init Info
 	
-	//this->mSocket.setBlocking(false); // ??? idk if i should set it non blockin but if i dont i think id have to multithread
+	this->mSocket.setBlocking(false); // ??? idk if i should set it non blockin but if i dont i think id have to multithread
 	
 	// ~~~~~~ this is just running(waiting) till game starts ~~~~
 	sf::Packet packet;
@@ -73,7 +73,7 @@ void Client::run() {
 
 }
 
-// if a packet is recieved it returns true
+// if a packet is recieved it returns true // throws error if no packet to recieve
 bool Client::recievePacket(sf::Packet& packet) {
 
 	if (this->mSocket.receive(packet) == sf::Socket::Done) {

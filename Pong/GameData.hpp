@@ -8,6 +8,14 @@ class GameData :
 
 public:
 
+    GameData() : Data() {
+        this->mMove = {};
+        this->mPos = {};
+        this->mIsCaught = false;
+        this->mGamePaused = false;
+        this->mDirection = NORTH;
+    }
+
     GameData(sf::Vector2f move, sf::Vector2f pos, bool isCaught = false, bool gamePaused = false, Direction direc = NORTH, sf::Uint16 SenderId = 0, sf::Uint16 RecipientId = 0, bool GameActive = false, std::string Message = "", sf::String temp = "")
         : Data(SenderId, RecipientId, GameActive, Message, temp)
     {

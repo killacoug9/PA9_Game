@@ -51,7 +51,9 @@ void Server::run(sf::Thread* thread) {
 	 
 	while (this->getGameJoinable()) {
 		//cout << "WHy exut" << this->getGameJoinable() << endl;
+		Sleep(500);
 	}
+
 	cout << "terminating thread" << endl;
 	thread->terminate();
 
@@ -67,8 +69,39 @@ void Server::run(sf::Thread* thread) {
 	messageAllClients(&data); // send a lobby packet saying the game is about to starts;
 	
 	// once we have all the connections.. when the game mstart is initiated we will go into second stage
+	this->mGameActive = true;
+
+	sf::Packet packet;
+	GameData gameDataTemp;
+	while (mGameActive) {
+		
+		for (int i = 0; i < this->mClientVector.size(); i++)
+		{
+			try {
+				if (recievePacket(this->mClientVector.at(i)->getSocket(), packet)) {
+					packet >> gameDataTemp;
+					messageAllClients(&gameDataTemp);
+				}
+			}
+			catch (std::runtime_error& e) {
+				cout << "[Server] Exception: " << e.what() << endl;
+			}
+		}
+
+	}
+	
 
 }
+
+bool Server::recievePacket(sf::TcpSocket& sock, sf::Packet& packet) {
+	if (sock.receive(packet) == sf::Socket::Done) {
+		return true;
+	}
+	else {
+		throw std::runtime_error("No packet to recieve");
+	}
+}
+
 
 // func that makes lobby open to joining, kinda
 void Server::letPeopleJoin() {

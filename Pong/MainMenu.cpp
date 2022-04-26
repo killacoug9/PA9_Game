@@ -199,7 +199,7 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 				//}
 				
 				
-				threadl.join(); // std
+				//threadl.join(); // std
 
 
 				/////////////////////////////////////////////////////////////////////////////////////////////////////////// runs the actual ganme
@@ -216,16 +216,21 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 
 					int numPlayers = serverObj.getNumPlayers();
 
-					std::vector<Client> playerList;
+					cout << "Num players is:" << numPlayers << endl;
+
+					//std::vector<Client> playerList;
+					std::vector<Client*> playerList;
+					
 
 
 					for (sf::Uint16 i = 0, id = 1; i < numPlayers; i++, id++)
 					{
-						
-						playerList.at(i).setId(id);
+						playerList.push_back(new Client());
+						playerList.at(i)->setId(id);
 					}
 
 					// multi thread server here
+
 
 
 					sf::RenderWindow GameWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Host Menu");
@@ -234,6 +239,7 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 
 
 				}
+				threadl.join();
 			}
 			if (this->MainMenuPressed() == 1) {
 				
@@ -241,20 +247,60 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 			
 
 				
-				clientObj.run();
+				//clientObj.run();
+				clientObj.joinHost();
 
-				while (Join.isOpen()) {
+				LobbyData lData;
+				sf::Packet packet;
+				int numPlayers;
+
+				while (Join.isOpen() ) {
 					sf::Event aevent;
 					while (Join.pollEvent(aevent)) {
 						if (aevent.type == sf::Event::Closed) {
 							Join.close();
 						}
 
+						
+
 					}
+					try {
+						clientObj.recievePacket(packet);
+						packet >> lData;
+						if (lData.mTimeTillStart <= DEFAULT_START_TIME) {
+							numPlayers = lData.mNumPlayers;
+							break;
+						}
+					}
+					catch (std::runtime_error& e) {
+						cout << "[Client] Exception in Join recive: " << e.what() << endl;
+					}
+					
 
 					Join.clear();
 					Join.display();
+
 				}
+
+				sf::RenderWindow GameWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Host Menu");
+
+				//int numPlayers = ;
+
+				//cout << "Num players is:" << numPlayers << endl;
+
+				//std::vector<Client> playerList;
+				std::vector<Client*> playerList;
+
+
+
+				for (sf::Uint16 i = 0, id = 1; i < numPlayers; i++, id++)
+				{
+					playerList.push_back(new Client());
+					playerList.at(i)->setId(id);
+				}
+
+				runGame(GameWindow, WINDOW_WIDTH, WINDOW_HEIGHT, clientObj, playerList);
+
 			}
 			if (this->MainMenuPressed() == 2) {
 				window.close();
@@ -367,8 +413,10 @@ void allowJoinLoop(Server& server, sf::RenderWindow& window, sf::Event event, sf
 }
 
 
-void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client& client, std::vector<Client>& playerList) {
+void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client& client, std::vector<Client*>& playerList) {
 	
+	client.getSocket().setBlocking(false);
+
 	bool isCaught = false;
 
 	Direction direc;
@@ -580,18 +628,27 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		outPacket << data;
 
 		client.sendPacket(outPacket);
-		
-		for (int i = 0; i < playerList.size() + 1; i++) // you are in player list 
+
+		for (int i = 0; i < playerList.size(); i++) // you are in player list 
 		{
-			client.recievePacket(outPacket); // gameData packet
-			//handlePacket();
-			outPacket >> data;
-			if (!(data.mSenderId == client.getId())) {
-				playerList.at(i - 1).getPlayer().setPos(data.mPos);
-				playerList.at(i - 1).getPlayer().setDirection(data.mDirection);
-				playerList.at(i - 1).getPlayer().update(dt);
-				playerList.at(i - 1).getPlayer().draw(window);
+			try {
+				client.recievePacket(outPacket); // gameData packet
+				//handlePacket();
+				outPacket >> data;
+				if (data.mSenderId != client.getId()) {
+					playerList.at(i)->getPlayer().setPos(data.mPos);
+					playerList.at(i)->getPlayer().setDirection(data.mDirection);
+					playerList.at(i)->getPlayer().update(dt);
+					playerList.at(i)->getPlayer().draw(window);
+				}
 			}
+			catch (std::runtime_error& e) {
+				if (e.what() != "No packet to recieve") {
+					//cout << "Exception in recive packet" << e.what() << endl;
+				}
+				
+			}
+
 		}
 
 		//finished

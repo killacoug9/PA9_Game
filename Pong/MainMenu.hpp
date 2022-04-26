@@ -59,6 +59,6 @@ void textArrSetProperties(sf::Text* mainMenu[3], std::string strArr[3], sf::Font
 
 void allowJoinLoop(Server& server, sf::RenderWindow& window, sf::Event event, sf::Text* optionsArr[3]);
 
-void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client& client, std::vector<Client>& playerList);
+void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client& client, std::vector<Client*>& playerList);
 
 int func();
