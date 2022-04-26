@@ -63,10 +63,18 @@ void Server::run(sf::Thread* thread) {
 
 	// for now i cab just put this goofily in main and 
 
-	///; ------------- On Event(host clicks start) ------------
-	LobbyData data(true, DEFAULT_START_TIME, mNumberOfPlayers, SERVER_ID);
+	Sleep(2000);
 
-	messageAllClients(&data); // send a lobby packet saying the game is about to starts;
+	sf::Uint16 strtTemp = 10;
+
+	///; ------------- On Event(host clicks start) ------------
+	//LobbyData data(true, DEFAULT_START_TIME, mNumberOfPlayers, SERVER_ID);
+	LobbyData someData(true, strtTemp, mNumberOfPlayers, SERVER_ID);
+	//LobbyData someData(true, DEFAULT_START_TIME, mNumberOfPlayers, SERVER_ID);
+
+	//cout << "stris" << someData.mIsGameStarting << "ttsserver" << someData.mTimeTillStart << endl;
+	//this->messageAllClients(&someData); // send a lobby packet saying the game is about to starts;
+	this->messageAllClients(someData); // send a lobby packet saying the game is about to starts;
 	
 	// once we have all the connections.. when the game mstart is initiated we will go into second stage
 	this->mGameActive = true;
@@ -79,7 +87,7 @@ void Server::run(sf::Thread* thread) {
 
 	sf::Packet packet;
 	GameData gameDataTemp;
-	while (mGameActive) {
+	while (this->mGameActive) {
 		
 		for (int i = 0; i < this->mClientVector.size(); i++)
 		{
@@ -211,6 +219,21 @@ void Server::messageAllClients(Data* data) {
 	for (int i = 0; i < this->mClientVector.size(); i++)
 	{
 		data->mRecipientId = this->mClientVector.at(i)->getId();
+
+		packet << data; // this is so annyoing
+		//packet << data->mSenderId << data->mRecipientId << data->mGameActive << data->temp;
+
+		this->mClientVector.at(i)->sendPacket(packet);
+	}
+}
+
+void Server::messageAllClients(LobbyData& data) {
+
+	sf::Packet packet;
+
+	for (int i = 0; i < this->mClientVector.size(); i++)
+	{
+		data.mRecipientId = this->mClientVector.at(i)->getId();
 
 		packet << data; // this is so annyoing
 		//packet << data->mSenderId << data->mRecipientId << data->mGameActive << data->temp;

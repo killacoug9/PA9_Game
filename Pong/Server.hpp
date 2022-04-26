@@ -91,6 +91,8 @@ public: // the server will have the mId = 0; it probably wont be used much, if n
 
 	bool recievePacket(sf::TcpSocket& sock, sf::Packet& packet);
 
+	void messageAllClients(LobbyData& data);
+
 //	void messageAllClients(LobbyData& data);
 
 

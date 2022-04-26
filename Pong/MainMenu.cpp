@@ -211,8 +211,10 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 					sf::Packet oPack;
 					Data d(serverObj.getNumPlayers(), 1, true, "", "");
 					
+					LobbyData ld(true, (sf::Int16) 10, serverObj.getNumPlayers(), SERVER_ID);
 
-					serverObj.messageAllClients(&d);
+					//serverObj.messageAllClients(&ld);
+					serverObj.messageAllClients(ld);
 
 					int numPlayers = serverObj.getNumPlayers();
 
@@ -231,7 +233,9 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 
 					// multi thread server here
 
+					//serverObj.messageAllClients(&d);
 
+					//Sleep(2000);
 
 					sf::RenderWindow GameWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Host Menu");
 
@@ -254,7 +258,7 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 
 
 				LobbyData lData;
-				sf::Packet packet;
+				//sf::Packet packet;
 				int numPlayers;
 				bool startPacketRecieved = false;
 
@@ -268,12 +272,13 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 					//	}
 					//	
 					//}
-
+					sf::Packet packet;
 					try {
 						if (clientObj.recievePacket(packet)) {
 							cout << "packet recieved" << endl;
 							//clientObj.recievePacket(packet);
 							packet >> lData;
+							cout << "tts" << lData.mTimeTillStart << "active" << lData.mGameActive << endl;
 
 							if (lData.mTimeTillStart <= DEFAULT_START_TIME || lData.mGameActive) {
 								numPlayers = lData.mNumPlayers;

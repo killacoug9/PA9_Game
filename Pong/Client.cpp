@@ -77,6 +77,7 @@ void Client::run() {
 bool Client::recievePacket(sf::Packet& packet) {
 
 	if (this->mSocket.receive(packet) == sf::Socket::Done) {
+//		cout << "get data" << packet.getData() << endl;
 		return true;
 	}
 	else {
