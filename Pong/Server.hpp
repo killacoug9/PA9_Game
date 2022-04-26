@@ -63,13 +63,13 @@ public: // the server will have the mId = 0; it probably wont be used much, if n
 
 	~Server();
 	
-	void run();
+	void run(sf::Thread* threadl);
 
 	void lobbyOperations();
 
 	void runGameOperations();
 
-	void letPeopleJoin(bool& allowJoin);
+	void letPeopleJoin();
 
 	bool listenForConections();
 
@@ -86,6 +86,8 @@ public: // the server will have the mId = 0; it probably wont be used much, if n
 	void messageAllClients(Data* data);
 
 	bool getGameJoinable() { return this->mGameJoinable; }
+
+	void setGameJoinable(bool temp) { this->mGameJoinable = temp; }
 
 //	void messageAllClients(LobbyData& data);
 
@@ -116,6 +118,7 @@ private:
 	sf::Uint16 mNumberOfPlayers; // made to uint from int
 	bool mGameActive;
 	bool mGameJoinable;
+
 
 
 

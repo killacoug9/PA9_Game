@@ -21,6 +21,13 @@ using std::endl;
 //};
 
 
+enum Direction {
+	NORTH,
+	EAST,
+	SOUTH,
+	WEST
+};
+
 class Data
 {
 	// can use sf::getDataSize() on the packet to see if its a lobby poacket or game packet??

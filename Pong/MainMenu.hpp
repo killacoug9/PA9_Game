@@ -2,6 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include<sstream>
+#include <Windows.h>
+#include <windows.h> 
+#include <excpt.h>
 
 #include "Server.hpp"
 
@@ -10,12 +13,6 @@
 #define WINDOW_WIDTH 960
 #define WINDOW_HEIGHT 540
 
-enum Direction {
-	North,
-	East,
-	South,
-	West
-};
 
 
 class MainMenu {
@@ -30,7 +27,7 @@ public:
 		return MainMenuSelected;
 	}
 
-
+	void allowJoinLoopMember(Server& server, sf::RenderWindow& window, sf::Event& event);
 
 	void runMenuScreen(sf::RenderWindow& window, sf::Event& event);
 
@@ -39,6 +36,12 @@ public:
 	void drawOtherPlayers(sf::RenderWindow& window);
 
 	void updateOtherPlayers();
+
+	void setMainMenuText(std::string one, std::string two, std::string three){
+		this->mainMenu[0].setString(one);
+		this->mainMenu[1].setString(two);
+		this->mainMenu[2].setString(three);
+	}
 
 	~MainMenu();
 private:
@@ -56,6 +59,6 @@ void textArrSetProperties(sf::Text* mainMenu[3], std::string strArr[3], sf::Font
 
 void allowJoinLoop(Server& server, sf::RenderWindow& window, sf::Event event, sf::Text* optionsArr[3]);
 
-void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight);
+void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client& client, std::vector<Client>& playerList);
 
 int func();

@@ -54,7 +54,7 @@ private:
         Count
     };
 public:
-    Character(const sf::Vector2f& newPos)
+    Character(const sf::Vector2f& newPos = {0, 0})
     {
         pos = newPos;
         sprite.setTextureRect({ 0,0,64,64 });
@@ -90,6 +90,24 @@ public:
         }
     }
 
+    void setDirection(Direction dir) {
+
+        //vel = dir * speed; // idk if taking this away is bad
+        if (dir == EAST) {
+            curAnimation = AnimationIndex::WalkingRight;
+        }
+        else if (dir == WEST) {
+            curAnimation = AnimationIndex::WalkingLeft;
+        }
+        else if (dir == NORTH) {
+            curAnimation = AnimationIndex::WalkingUp;
+        }
+        else if (dir == SOUTH) {
+            curAnimation = AnimationIndex::WalkingDown;
+        }
+    }
+
+
     void update(float dt) {
         // sf::Vector2f prevPos = pos;  
          //pos += vel * dt;
@@ -102,6 +120,7 @@ public:
         sprite.setPosition(pos);
     }
 
+    sf::Vector2f getPos() { return pos; }
 
 private:
     static constexpr float speed = 100.0;

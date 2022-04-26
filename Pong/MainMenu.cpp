@@ -37,7 +37,7 @@ MainMenu::MainMenu(float width, float height) {
 }
 
 MainMenu::~MainMenu(){
-
+	
 }
 
 void MainMenu::drawTextButtons(sf::RenderWindow& window) {
@@ -71,7 +71,69 @@ void MainMenu::MoveDown() {
 	}
 }
 
+void MainMenu::allowJoinLoopMember(Server& server, sf::RenderWindow& window, sf::Event& event) {
+
+	sf::Uint16 numberOfPlayers = server.getNumPlayers();
+
+	while (window.pollEvent(event)) {
+		if (event.type == sf::Event::Closed) {
+			window.close();
+		}
+
+		if (event.type == sf::Event::KeyReleased) {
+			if (event.key.code == sf::Keyboard::W) {
+
+				//if (choice - 1 >= 0) {
+				//	mainMenu[choice].setFillColor(sf::Color::Black);
+				//	choice--;
+				//	if (choice == -1) {
+				//		choice = 2;
+				//	}
+				//	mainMenu[choice].setFillColor(sf::Color::Green);
+				//}
+				this->MoveUp();
+
+				break;
+			}
+		}
+
+		if (event.type == sf::Event::KeyReleased) {
+			if (event.key.code == sf::Keyboard::S) {
+
+				//if (choice + 1 <= MAX_MAIN_MENU) {
+				//	mainMenu[choice].setFillColor(sf::Color::Black);
+				//	choice++;
+				//	if (choice == 3) {
+				//		choice = 2;
+				//	}
+				//	mainMenu[choice].setFillColor(sf::Color::Green);
+				//}
+				this->MoveDown();
+
+				break;
+			}
+		}
+
+		if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Return) {
+
+			if (this->MainMenuPressed() == 0) {
+				server.setGameJoinable(false); // this will cuase the allow join server func to send an init packet to all clients
+
+			}
+			if (this->MainMenuPressed() == 1) {
+				cout << "Nothing happened in hostJoin choice == 1;" << endl;
+			}
+			if (this->MainMenuPressed() == 2) {
+				window.close();
+				break;
+			}
+		}
+	}
+
+}
+
 void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
+	Client clientObj;
 	while (window.pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {
 			window.close();
@@ -90,49 +152,91 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 			}
 		}
 
-		if (event.key.code == sf::Keyboard::Return) {
+		if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Return) {
 
-			int x = this->MainMenuPressed();
-			if (x == 0) {
-				window.close();
+			//int x = this->MainMenuPressed();
+			if (this->MainMenuPressed() == 0) {
+				//window.close();
 				
 				Server serverObj;
+				cout << "Server Object: " << serverObj.getGameJoinable() << endl;
 
-				sf::Thread thread(&Server::run, &serverObj); // starts to allow them to join
-				thread.launch(); 
+				sf::Thread* passedThread; // thread i pass into run so i can terminate the listen thread from here
+				
+				//serverObj.run();
+				std::thread threadl(&Server::run, std::ref(serverObj), passedThread);
+				/////////////////////////////
 
-				sf::RenderWindow JoinHost(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Allow Join Host Menu");
+				clientObj.joinHost();
+
+				sf::RenderWindow JoinHost(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Allow Join Host Menu", sf::Style::Default);
 
 				MainMenu objForBackground(JoinHost.getSize().x, JoinHost.getSize().y);
 
-				sf::Text* optionsArr[3];
+				
+
+				//sf::Text* optionsArr[3];
+				objForBackground.setMainMenuText("Start", "Null", "Exit");
 
 				while (JoinHost.isOpen() && serverObj.getGameJoinable()) {
 					sf::Event JoinHostEvent;
-					allowJoinLoop(serverObj, JoinHost, JoinHostEvent, optionsArr);
+					serverObj.getGameJoinable() ? objForBackground.setMainMenuText("Start", "Joinable", "Exit") : objForBackground.setMainMenuText("Start", "Not-Joinable", "Exit");
+					objForBackground.allowJoinLoopMember(serverObj, JoinHost, JoinHostEvent);
 
 					JoinHost.clear();
 					JoinHost.draw(objForBackground.getBackgroundPicture());
-					
-					for (int i = 0; i < MAX_MAIN_MENU; i++) {
-						JoinHost.draw(*optionsArr[i]);
-					}
-
+					objForBackground.drawTextButtons(JoinHost);
 					JoinHost.display();
 				}
 
 
+				//__try {
+				//	passedThread->terminate();
+				//	delete passedThread;
+				//}
+				//__except (EXCEPTION_EXECUTE_HANDLER) {
+				//	cout << "Goofy Exception" << endl;
+				//}
+				
+				
+				threadl.join(); // std
+
 
 				/////////////////////////////////////////////////////////////////////////////////////////////////////////// runs the actual ganme
-				sf::RenderWindow GameWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Host Menu");
 
-				runGame(GameWindow, WINDOW_WIDTH, WINDOW_HEIGHT);
+				if (!serverObj.getGameJoinable()) { // if they didnt click exit in the prevoius window
 
-				
+					// it sends message game is starting.. not here
+					// then itll send the num players.. then itll send them in order in vector
+					sf::Packet oPack;
+					Data d(serverObj.getNumPlayers(), 1, true, "", "");
+					
 
+					serverObj.messageAllClients(&d);
+
+					int numPlayers = serverObj.getNumPlayers();
+
+					std::vector<Client> playerList;
+
+
+					for (sf::Uint16 i = 0, id = 1; i < numPlayers; i++, id++)
+					{
+						
+						playerList.at(i).setId(id);
+					}
+
+					// multi thread server here
+
+
+					sf::RenderWindow GameWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Host Menu");
+
+					runGame(GameWindow, WINDOW_WIDTH, WINDOW_HEIGHT, clientObj, playerList);
+
+
+				}
 			}
-			if (x == 1) {
-				Client clientObj;
+			if (this->MainMenuPressed() == 1) {
+				
 				sf::RenderWindow Join(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Join Menu");
 			
 
@@ -152,7 +256,7 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 					Join.display();
 				}
 			}
-			if (x == 2) {
+			if (this->MainMenuPressed() == 2) {
 				window.close();
 				break;
 			}
@@ -192,6 +296,7 @@ void textArrSetProperties(sf::Text* mainMenu[3], std::string strArr[3], sf::Font
 	mainMenu[2]->setPosition(150, 450);
 }
 
+// not really using
 void allowJoinLoop(Server& server, sf::RenderWindow& window, sf::Event event, sf::Text* optionsArr[3]) {
 
 	sf::Uint16 numberOfPlayers = server.getNumPlayers();
@@ -203,11 +308,6 @@ void allowJoinLoop(Server& server, sf::RenderWindow& window, sf::Event event, sf
 	int choice = -1;
 	//sf::Text optionsArr[3];
 	std::string tempStrArr[3] = { "Start", "Null", "Exit" };
-
-	sf::Font font;
-
-	textArrSetProperties(optionsArr, tempStrArr, font);
-
 
 	while (window.pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {
@@ -267,8 +367,17 @@ void allowJoinLoop(Server& server, sf::RenderWindow& window, sf::Event event, sf
 }
 
 
-void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight) {
+void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client& client, std::vector<Client>& playerList) {
 	
+	bool isCaught = false;
+
+	Direction direc;
+
+	//for (int i = 0; i < playerList.size(); i++)
+	//{
+	//	//playerList.at(i).getPlayer().update//{ float(window.getSize().x) / 2 - 32, float(window.getSize().y) / 2 - 32 }
+	//}
+
 	//init game 
 	float gridSizeF = 64.f;
 	unsigned girdSizeU = static_cast<unsigned>(gridSizeF);
@@ -369,6 +478,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight) {
 			view.move(-viewSpeed * dt, 0.f);
 			//character
 			dir.x -= 1.0;
+			direc = WEST;
 			keyPress = true;
 			
 		}
@@ -377,6 +487,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight) {
 			view.move(viewSpeed * dt, 0.f);
 
 			dir.x += 1.0;
+			direc = EAST;
 			keyPress = true;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {//Up
@@ -384,6 +495,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight) {
 			view.move(0.f, -viewSpeed * dt);
 
 			dir.y -= 1.0;
+			direc = NORTH;
 			keyPress = true;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {//Down
@@ -391,6 +503,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight) {
 			view.move(0.f, viewSpeed * dt);
 
 			dir.y += 1.0;
+			direc = SOUTH;
 			keyPress = true;
 		}
 		if (keyPress == true) {
@@ -459,12 +572,35 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight) {
 
 		window.draw(text);
 		
+
+		
+		// lhs << rhs.mSenderId << rhs.mRecipientId << rhs.mGameActive << rhs.temp << rhs.mMove.x << rhs.mMove.y << rhs.mPos.x << rhs.mPos.y << rhs.mIsCaught << rhs.mGamePaused;
+		GameData data({}, model.getPos(), isCaught, false, direc, client.getId(), SERVER_ID, true, "");
+		sf::Packet outPacket;
+		outPacket << data;
+
+		client.sendPacket(outPacket);
+		
+		for (int i = 0; i < playerList.size() + 1; i++) // you are in player list 
+		{
+			client.recievePacket(outPacket); // gameData packet
+			//handlePacket();
+			outPacket >> data;
+			if (!(data.mSenderId == client.getId())) {
+				playerList.at(i - 1).getPlayer().setPos(data.mPos);
+				playerList.at(i - 1).getPlayer().setDirection(data.mDirection);
+				playerList.at(i - 1).getPlayer().update(dt);
+				playerList.at(i - 1).getPlayer().draw(window);
+			}
+		}
+
 		//finished
 		window.display();
-
 	}
 
 }
+
+
 
 void MainMenu::updateOtherPlayers() {
 

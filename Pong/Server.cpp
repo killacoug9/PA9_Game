@@ -14,6 +14,8 @@ Server::Server(int nPlayers, bool gActive, bool gameJoinable) {
 	cout << "The servers IP is " << sf::IpAddress::getLocalAddress() << endl;// might need to do sf::IpAddress::getLocalAddress().toString()
 }
 
+
+
 Server::~Server() {
 	for (int i = 0; i < this->mClientVector.size(); i++)
 	{
@@ -24,15 +26,17 @@ Server::~Server() {
 
 
 
-void Server::run() {
-	
-	bool& allowJoin = this->mGameJoinable;
+void Server::run(sf::Thread* thread) {
 
 	// start one thread to allow for and accept people to join game, and in another thread allow the host to stop searching with user input and end the game
 
-	std::thread threadl(&Server::letPeopleJoin, this, std::ref(allowJoin));
+	//sf::Thread threadl(&Server::run, this);
 
+	thread = new sf::Thread(&Server::letPeopleJoin, this);
+	thread->launch();
 
+	//std::thread threadl(&Server::letPeopleJoin, this, std::ref(allowJoin));
+	 
 	//do {
 	//	int counter = 0;
 	//	std::string temp;
@@ -44,10 +48,16 @@ void Server::run() {
 	//	}
 	//	counter++;
 	//} while (allowJoin);
-
-	if (threadl.joinable()) {
-		threadl.join(); // shouldnt need this but whatever
+	 
+	while (this->getGameJoinable()) {
+		//cout << "WHy exut" << this->getGameJoinable() << endl;
 	}
+	cout << "terminating thread" << endl;
+	thread->terminate();
+
+	//if (threadl.joinable()) {
+	//	threadl.join(); // shouldnt need this but whatever
+	//}
 
 	// for now i cab just put this goofily in main and 
 
@@ -55,21 +65,15 @@ void Server::run() {
 	LobbyData data(true, DEFAULT_START_TIME, mNumberOfPlayers, SERVER_ID);
 
 	messageAllClients(&data); // send a lobby packet saying the game is about to starts;
-
-
 	
 	// once we have all the connections.. when the game mstart is initiated we will go into second stage
-	while (true) {
-		logl("playing game");
-	}
 
 }
 
 // func that makes lobby open to joining, kinda
-void Server::letPeopleJoin(bool& allowJoin) {
-	bool inLobby = true;
+void Server::letPeopleJoin() {
 
-	while (inLobby && allowJoin) {
+	while (this->getGameJoinable()) {
 		this->listenForConections();
 	}
 }
@@ -138,6 +142,7 @@ bool Server::acceptConnection(sf::TcpListener& listener) {
 		}
 		else {
 			logl("A new client didnt connect");
+			break;
 		}
 	}
 

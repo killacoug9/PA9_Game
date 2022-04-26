@@ -5,12 +5,15 @@
 
 #include "GameData.hpp"
 #include "LobbyData.hpp"
+#include "character.hpp"
 
 #include <iostream>
 #include <string>
 #include <vector>
 #include <stdexcept>
 #include <thread>
+#include <windows.h> 
+
 
 //#include <exception>
 
@@ -60,12 +63,15 @@ public:
 
 	bool recievePacket(sf::Packet& packet); 
 
+	Character& getPlayer() { return player; }
+
 protected:
 	
 	sf::TcpSocket mSocket; //  // comment to self:: mutualbetween client and server(middleman)
 
 	sf::Packet lastPacket; // maybe need this?
 	sf::Uint16 mId; // maybe make capslock??
+	Character player;
 	
 private:
 	bool mIsHost;

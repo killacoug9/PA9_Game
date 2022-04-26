@@ -54,6 +54,7 @@ int main()
 		HomeScreenWindow.draw(menuButtons.getBackgroundPicture());
 		menuButtons.drawTextButtons(HomeScreenWindow);
 		HomeScreenWindow.display();
+		//cout << "d in m" << endl;
 	}
 
 	
@@ -99,23 +100,24 @@ int main()
 		/* --- when event triggers that they clicked %Host% --- */
 		if (true) {
 
-			try {
-				isHost = true;
+			//try {
+			//	isHost = true;
 
-				Server serverObj;
+			//	Server serverObj;
 
-				sf::Thread thread(&Server::run, &serverObj); // works?
-				thread.launch(); // this runs the listen for connctions -> accept connections -> sendInitInfo
+			//	sf::Thread thread(&Server::run, &serverObj); // works?
+			//	thread.launch(); // this runs the listen for connctions -> accept connections -> sendInitInfo
 
-				//clientObj.connect(SERVER_LOCAL_IP, SERVER_PORT); // not scalable but will work for now.
-				clientObj.joinHost();
+			//	//clientObj.connect(SERVER_LOCAL_IP, SERVER_PORT); // not scalable but will work for now.
+			//	clientObj.joinHost();
 
-				// possiblyshow host menu screen?
-				thread.wait();
-			}
-			catch (...) {
-				cout << "Caught an exception in main" << endl;
-			}
+			//	// possiblyshow host menu screen?
+			//	thread.wait();
+			//}
+			//catch (...) {
+			//	cout << "Caught an exception in main" << endl;
+			//}
+
 			//isHost = true;
 			//Server serverObj;
 			//sf::Thread thread(&Server::run, &serverObj); // works?
@@ -135,7 +137,7 @@ int main()
 		if (input == 'y') {
 			Server serverObj;
 
-			serverObj.run();
+			//serverObj.run();
 
 		}
 		else {

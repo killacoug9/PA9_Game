@@ -29,7 +29,7 @@ void Client::run() {
 	if (true) 
 		this->joinHost(); // this joins and get init Info
 	
-	this->mSocket.setBlocking(false); // ??? idk if i should set it non blockin but if i dont i think id have to multithread
+	//this->mSocket.setBlocking(false); // ??? idk if i should set it non blockin but if i dont i think id have to multithread
 	
 	// ~~~~~~ this is just running(waiting) till game starts ~~~~
 	sf::Packet packet;
@@ -90,7 +90,7 @@ bool Client::recievePacket(sf::Packet& packet) {
 //if (((*mSocket))->connect(ip, port) != sf::Socket::Done) {
 void Client::connect(const char* ip, unsigned short port) {
 	std::string temp = ip;
-	cout << "Client is trying to connect to " << temp << " through port " << port << "...." << endl;
+	cout << "[Client] trying to connect to " << temp << " through port " << port << "...." << endl;
 	//try { // getting a break here for some reason
 	//	if (this->mSocket.connect(ip, port) != sf::Socket::Done) {
 	//		logl("Could not connect to the server");
@@ -192,6 +192,7 @@ void Client::recieveStartInfo() {
 		else {
 			logl("Couldnt get the initilization info");
 		}
+		Sleep(250);
 	}
 }
 
