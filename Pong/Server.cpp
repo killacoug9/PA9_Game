@@ -33,21 +33,23 @@ void Server::run() {
 	std::thread threadl(&Server::letPeopleJoin, this, std::ref(allowJoin));
 
 
-	do {
-		int counter = 0;
-		std::string temp;
-		if (!(counter % 25)) { // so it doesnt spam the console
-			sysin("do you still want people to be able to join?", temp);
-			if (temp == "n") {
-				allowJoin = false;
-			}
-		}
-		counter++;
-	} while (allowJoin);
+	//do {
+	//	int counter = 0;
+	//	std::string temp;
+	//	if (!(counter % 25)) { // so it doesnt spam the console
+	//		sysin("do you still want people to be able to join?", temp);
+	//		if (temp == "n") {
+	//			allowJoin = false;
+	//		}
+	//	}
+	//	counter++;
+	//} while (allowJoin);
 
 	if (threadl.joinable()) {
 		threadl.join(); // shouldnt need this but whatever
 	}
+
+	// for now i cab just put this goofily in main and 
 
 	///; ------------- On Event(host clicks start) ------------
 	LobbyData data(true, DEFAULT_START_TIME, mNumberOfPlayers, SERVER_ID);

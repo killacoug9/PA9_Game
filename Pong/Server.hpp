@@ -85,6 +85,8 @@ public: // the server will have the mId = 0; it probably wont be used much, if n
 
 	void messageAllClients(Data* data);
 
+	bool getGameJoinable() { return this->mGameJoinable; }
+
 //	void messageAllClients(LobbyData& data);
 
 

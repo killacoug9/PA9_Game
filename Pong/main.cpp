@@ -49,12 +49,12 @@ int main()
 	while (HomeScreenWindow.isOpen()) {
 		sf::Event event;
 		menuButtons.runMenuScreen(HomeScreenWindow, event);
-
+		
 		HomeScreenWindow.clear();
 		HomeScreenWindow.draw(menuButtons.getBackgroundPicture());
 		menuButtons.drawTextButtons(HomeScreenWindow);
 		HomeScreenWindow.display();
-}
+	}
 
 	
 

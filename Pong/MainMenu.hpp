@@ -3,6 +3,8 @@
 #include <iostream>
 #include<sstream>
 
+#include "Server.hpp"
+
 #define MAX_MAIN_MENU 3
 
 #define WINDOW_WIDTH 960
@@ -28,6 +30,8 @@ public:
 		return MainMenuSelected;
 	}
 
+
+
 	void runMenuScreen(sf::RenderWindow& window, sf::Event& event);
 
 	sf::RectangleShape& getBackgroundPicture() { return background; }
@@ -48,6 +52,9 @@ private:
 	
 };
 
+void textArrSetProperties(sf::Text* mainMenu[3], std::string strArr[3], sf::Font& font);
+
+void allowJoinLoop(Server& server, sf::RenderWindow& window, sf::Event event, sf::Text* optionsArr[3]);
 
 void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight);
 

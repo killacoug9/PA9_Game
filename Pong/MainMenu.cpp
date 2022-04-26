@@ -1,6 +1,7 @@
 #include"MainMenu.hpp"
 #include"character.hpp"
 
+#include "Server.hpp"
 
 MainMenu::MainMenu(float width, float height) {
 	
@@ -91,17 +92,53 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 
 		if (event.key.code == sf::Keyboard::Return) {
 
-
-
 			int x = this->MainMenuPressed();
 			if (x == 0) {
-				sf::RenderWindow Host(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Host Menu");
+				window.close();
+				
+				Server serverObj;
 
-				runGame(Host, WINDOW_WIDTH, WINDOW_HEIGHT);
+				sf::Thread thread(&Server::run, &serverObj); // starts to allow them to join
+				thread.launch(); 
+
+				sf::RenderWindow JoinHost(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Allow Join Host Menu");
+
+				MainMenu objForBackground(JoinHost.getSize().x, JoinHost.getSize().y);
+
+				sf::Text* optionsArr[3];
+
+				while (JoinHost.isOpen() && serverObj.getGameJoinable()) {
+					sf::Event JoinHostEvent;
+					allowJoinLoop(serverObj, JoinHost, JoinHostEvent, optionsArr);
+
+					JoinHost.clear();
+					JoinHost.draw(objForBackground.getBackgroundPicture());
+					
+					for (int i = 0; i < MAX_MAIN_MENU; i++) {
+						JoinHost.draw(*optionsArr[i]);
+					}
+
+					JoinHost.display();
+				}
+
+
+
+				/////////////////////////////////////////////////////////////////////////////////////////////////////////// runs the actual ganme
+				sf::RenderWindow GameWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Host Menu");
+
+				runGame(GameWindow, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+				
 
 			}
 			if (x == 1) {
+				Client clientObj;
 				sf::RenderWindow Join(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Join Menu");
+			
+
+				
+				clientObj.run();
+
 				while (Join.isOpen()) {
 					sf::Event aevent;
 					while (Join.pollEvent(aevent)) {
@@ -121,6 +158,112 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 			}
 		}
 	}
+}
+
+
+//	///; ------------- On Event(host clicks start) ------------
+///LobbyData data(true, DEFAULT_START_TIME, mNumberOfPlayers, SERVER_ID);
+
+//messageAllClients(&data); // send a lobby packet saying the game is about to starts;
+
+void textArrSetProperties(sf::Text* mainMenu[3], std::string strArr[3], sf::Font& font) {
+
+	if (!font.loadFromFile("Fonts/Freedom.ttf")) {
+		std::cout << "could not load font\n";
+	}
+
+	//Host
+	mainMenu[0]->setFont(font);
+	mainMenu[0]->setFillColor(sf::Color::Black);
+	mainMenu[0]->setString(strArr[0]);
+	mainMenu[0]->setCharacterSize(64);
+	mainMenu[0]->setPosition(150, 300);
+	//join
+	mainMenu[1]->setFont(font);
+	mainMenu[1]->setFillColor(sf::Color::Black);
+	mainMenu[1]->setString(strArr[1]);
+	mainMenu[1]->setCharacterSize(64);
+	mainMenu[1]->setPosition(150, 375);
+	//Exit
+	mainMenu[2]->setFont(font);
+	mainMenu[2]->setFillColor(sf::Color::Black);
+	mainMenu[2]->setString(strArr[2]);
+	mainMenu[2]->setCharacterSize(64);
+	mainMenu[2]->setPosition(150, 450);
+}
+
+void allowJoinLoop(Server& server, sf::RenderWindow& window, sf::Event event, sf::Text* optionsArr[3]) {
+
+	sf::Uint16 numberOfPlayers = server.getNumPlayers();
+
+	//LobbyData data(true, DEFAULT_START_TIME, numberOfPlayers, SERVER_ID);
+
+	//server.messageAllClients(&data); // send a lobby packet saying the game is about to starts;
+
+	int choice = -1;
+	//sf::Text optionsArr[3];
+	std::string tempStrArr[3] = { "Start", "Null", "Exit" };
+
+	sf::Font font;
+
+	textArrSetProperties(optionsArr, tempStrArr, font);
+
+
+	while (window.pollEvent(event)) {
+		if (event.type == sf::Event::Closed) {
+			window.close();
+		}
+
+		if (event.type == sf::Event::KeyReleased) {
+			if (event.key.code == sf::Keyboard::W) {
+				
+				if (choice - 1 >= 0) {
+					optionsArr[choice]->setFillColor(sf::Color::Black);
+
+					choice--;
+					if (choice == -1) {
+						choice = 2;
+					}
+					optionsArr[choice]->setFillColor(sf::Color::Green);
+				}
+
+				break;
+			}
+		}
+
+		if (event.type == sf::Event::KeyReleased) {
+			if (event.key.code == sf::Keyboard::S) {
+				
+				if (choice + 1 <= MAX_MAIN_MENU) {
+
+					optionsArr[choice]->setFillColor(sf::Color::Black);
+
+					choice++;
+					if (choice == 3) {
+						choice = 2;
+					}
+					optionsArr[choice]->setFillColor(sf::Color::Green);
+				}
+
+				break;
+			}
+		}
+
+		if (event.key.code == sf::Keyboard::Return) {
+
+			if (choice == 0) {
+				
+			}
+			if (choice == 1) {
+				cout << "Nothing happened in hostJoin choice == 1;" << endl;
+			}
+			if (choice == 2) {
+				window.close();
+				break;
+			}
+		}
+	}
+
 }
 
 
@@ -202,30 +345,14 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight) {
 		dt = dtClock.restart().asSeconds();
 
 		//update mouse positions
-		
 
 		window.setView(view);
-		
-		//if (mousePosView.x >= 0.f) {
-		//	mousePosGrid.x = mousePosView.x / gridSizeF;
-		//}
-		//if (mousePosView.y >= 0.f) {
-		//	mousePosGrid.y = mousePosView.y / gridSizeF;
-		//}
 
 		window.setView(window.getDefaultView());
 		//update game elements
 
 
 		sf::Vector2f dir = { 0.0, 0.0 };
-
-		////update ui
-		//std::stringstream ss;
-		//ss << "Screen: " << mousePosScreen.x << " " << mousePosScreen.y << "\n"
-		//	<< "Window: " << mousePosWindow.x << " " << mousePosWindow.y << "\n"
-		//	<< "View: " << mousePosView.x << " " << mousePosView.y << "\n"
-		//	<< "Grid: " << mousePosGrid.x << " " << mousePosGrid.y << "\n";
-		//text.setString(ss.str());
 
 		//events
 		sf::Event event;
