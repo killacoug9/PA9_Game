@@ -94,7 +94,7 @@ void Server::run(sf::Thread* thread) {
 			try {
 				if (recievePacket(this->mClientVector.at(i)->getSocket(), packet)) {
 					packet >> gameDataTemp;
-					messageAllClients(&gameDataTemp);
+					messageAllClients(gameDataTemp);
 				}
 			}
 			catch (std::runtime_error& e) {
@@ -228,6 +228,21 @@ void Server::messageAllClients(Data* data) {
 }
 
 void Server::messageAllClients(LobbyData& data) {
+
+	sf::Packet packet;
+
+	for (int i = 0; i < this->mClientVector.size(); i++)
+	{
+		data.mRecipientId = this->mClientVector.at(i)->getId();
+
+		packet << data; // this is so annyoing
+		//packet << data->mSenderId << data->mRecipientId << data->mGameActive << data->temp;
+
+		this->mClientVector.at(i)->sendPacket(packet);
+	}
+}
+
+void Server::messageAllClients(GameData& data) {
 
 	sf::Packet packet;
 

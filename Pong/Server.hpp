@@ -93,6 +93,8 @@ public: // the server will have the mId = 0; it probably wont be used much, if n
 
 	void messageAllClients(LobbyData& data);
 
+	void messageAllClients(GameData& data);
+
 //	void messageAllClients(LobbyData& data);
 
 

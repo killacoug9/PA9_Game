@@ -262,7 +262,7 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 				int numPlayers;
 				bool startPacketRecieved = false;
 
-				cout << "before loop;" << endl;
+				
 				//while (Join.isOpen() ) {
 				while (!startPacketRecieved && lData.mTimeTillStart >= DEFAULT_START_TIME) {
 					//sf::Event aevent;
@@ -275,14 +275,14 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 					sf::Packet packet;
 					try {
 						if (clientObj.recievePacket(packet)) {
-							cout << "packet recieved" << endl;
+							
 							//clientObj.recievePacket(packet);
 							packet >> lData;
-							cout << "tts" << lData.mTimeTillStart << "active" << lData.mGameActive << endl;
+							
 
 							if (lData.mTimeTillStart <= DEFAULT_START_TIME || lData.mGameActive) {
 								numPlayers = lData.mNumPlayers;
-								cout << " i think the game startting" << endl;
+								
 								break;
 							}
 						}
@@ -299,7 +299,7 @@ void MainMenu::runMenuScreen(sf::RenderWindow& window, sf::Event& event) {
 					}
 
 				}
-				cout << "about to make the join ganme window" << endl;
+				
 
 				sf::RenderWindow GameWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Host Menu");
 
@@ -642,19 +642,25 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 
 		
 		// lhs << rhs.mSenderId << rhs.mRecipientId << rhs.mGameActive << rhs.temp << rhs.mMove.x << rhs.mMove.y << rhs.mPos.x << rhs.mPos.y << rhs.mIsCaught << rhs.mGamePaused;
+		//GameData(sf::Vector2f move, sf::Vector2f pos, bool isCaught = false, bool gamePaused = false, Direction direc = NORTH, sf::Uint16 SenderId = 0, sf::Uint16 RecipientId = 0, bool GameActive = false, std::string Message = "", sf::String temp = "")
+
 		GameData data({}, model.getPos(), isCaught, false, direc, client.getId(), SERVER_ID, true, "", "");
 		sf::Packet outPacket;
 		outPacket << data;
+
+		GameData inData;
+		sf::Packet inPacket;
 
 		client.sendPacket(outPacket);
 
 		for (int i = 0; i < playerList.size(); i++) // you are in player list 
 		{
 			try {
-				client.recievePacket(outPacket); // gameData packet
+				client.recievePacket(inPacket); // gameData packet
 				//handlePacket();
-				outPacket >> data;
-				if (data.mSenderId != client.getId()) {
+				inPacket >> inData;
+				//cout << inData.mSenderId << endl;
+				if (inData.mSenderId != client.getId()) {
 					playerList.at(i)->getPlayer().setPos(data.mPos);
 					playerList.at(i)->getPlayer().setDirection(data.mDirection);
 					playerList.at(i)->getPlayer().update(dt);
