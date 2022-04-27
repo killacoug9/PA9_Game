@@ -1,7 +1,7 @@
 #include"MainMenu.hpp"
 #include"character.hpp"
 
-#include "Coin.h"
+#include "Coin.hpp"
 
 #include "Server.hpp"
 
@@ -669,15 +669,6 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		std::stringstream sss;
 		sss << "Score: " << SCORE << "\n";
 		score.setString(sss.str());
-
-		//events
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				window.close();
-
-		}
 
 
 		//events
