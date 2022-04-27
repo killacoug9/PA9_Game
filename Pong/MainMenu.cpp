@@ -634,10 +634,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		//selector
 		
 		//draw ui
-		window.setView(window.getDefaultView());
-		model.draw(window);
 
-		window.draw(text);
 		
 
 		
@@ -675,9 +672,19 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 				}
 				
 			}
+			catch (std::out_of_range& e) {
+				cout << e.what() << endl;
+			}
 
 		}
 
+		window.clear();
+		window.setView(window.getDefaultView());
+		//model.draw(window);
+
+		window.draw(text);
+		playerList.at(0)->getPlayer().draw(window);
+		playerList.at(1)->getPlayer().draw(window);
 		//finished
 		window.display();
 	}
