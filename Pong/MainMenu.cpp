@@ -822,10 +822,6 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 				std::cout << "COLLISION" << std::endl;
 			}
 
-
-
-
-
 		}
 
 		//selector
