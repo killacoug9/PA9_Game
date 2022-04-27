@@ -526,6 +526,45 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 	auto tp = std::chrono::steady_clock::now();
 
 
+	auto lambdaThread = [](sf::RenderWindow& window, Client& client, std::vector<Client*>& playerList, sf::Clock& recClock, GameData& inData, sf::Packet& inPacket, float& dt) {
+		while (window.isOpen()) {
+			if (recClock.getElapsedTime().asMilliseconds() > MS_PER_PACKET / 4) { // doesnt garuentee u get a packet from everyone // higher denomenator means more lag??
+				try {
+					client.recievePacket(inPacket); // gameData packet
+					//inPacket >> oldInData;
+
+					inPacket >> inData;
+					int temp = inData.mSenderId;
+					//cout << "whT" << inData.mSenderId << endl;
+					//cout << "Size" << inPacket.getDataSize() << endl;
+					if (playerList.at(temp - 1)->getId() != client.getId()) {
+						playerList.at(temp - 1)->getPlayer().setPos(inData.mPos);
+						playerList.at(temp - 1)->getPlayer().setDirection(inData.mDirection);
+						playerList.at(temp - 1)->getPlayer().update(dt);
+						//playerList.at(temp - 1)->getPlayer().draw(window);
+						//playerList.at(temp - 1)->setPrevPacket(inPacket);
+						//playerList.at(temp - 1)->setPrevData(inData);
+					}
+
+
+				}
+				catch (std::runtime_error& e) {
+					if (e.what() != "No packet to recieve") {
+						//cout << "Exception in recive packet" << e.what() << endl;
+					}
+
+				}
+				catch (std::out_of_range& e) {
+					cout << e.what() << endl;
+				}
+				recClock.restart();
+			}
+		}
+	};
+
+	std::thread ClientRecieveThread(lambdaThread, std::ref(window), std::ref(client), std::ref(playerList), std::ref(recClock), std::ref(inData), std::ref(inPacket), std::ref(dt));
+	
+
 	while (window.isOpen())
 	{
 		//Update dt
@@ -657,7 +696,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		}
 
 
-		if (recClock.getElapsedTime().asMilliseconds() > MS_PER_PACKET / 4) { // doesnt garuentee u get a packet from everyone // higher denomenator means more lag??
+/*		if (recClock.getElapsedTime().asMilliseconds() > MS_PER_PACKET / 4) { // doesnt garuentee u get a packet from everyone // higher denomenator means more lag??
 			try {
 				client.recievePacket(inPacket); // gameData packet
 				//inPacket >> oldInData;
@@ -687,7 +726,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 				cout << e.what() << endl;
 			}
 			recClock.restart();
-		}
+		}*/
 
 		for (int i = 0; i < playerList.size(); i++) // draw all but yourself
 		{
@@ -742,7 +781,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		//finished
 		window.display();
 	}
-
+	ClientRecieveThread.join();
 }
 
 void MainMenu::updateOtherPlayers() {
