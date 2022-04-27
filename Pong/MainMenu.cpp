@@ -473,6 +473,9 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 
 	//init window
 
+	sf::Vector2f characterPosWindow;
+	sf::Vector2i characterPosGrid;
+
 	window.setFramerateLimit(120);
 
 	sf::View view;
@@ -484,7 +487,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 	view.setCenter(0, 0);
 	float viewSpeed = 300.f;//how fast the view moves like move speed
 
-	const int mapSize = 20;//20 x 20 tiles
+	const int mapSize = 22;//20 x 20 tiles
 	//init game elements
 
 
@@ -498,12 +501,27 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		tileMap[x].resize(mapSize, sf::RectangleShape());
 		for (int y = 0; y < mapSize; y++)
 		{
+			if (x % 4 == 0) {
+				tileMap[x][y].setSize(sf::Vector2f(gridSizeF, gridSizeF));
+				tileMap[x][y].setFillColor(sf::Color::White);
+				tileMap[x][y].setOutlineThickness(1.f);
+				tileMap[x][y].setOutlineColor(sf::Color::Black);
+				tileMap[x][y].setPosition(x * gridSizeF, y * gridSizeF);
+			}
+			else if (y % 4 == 0) {
+				tileMap[x][y].setSize(sf::Vector2f(gridSizeF, gridSizeF));
+				tileMap[x][y].setFillColor(sf::Color::White);
+				tileMap[x][y].setOutlineThickness(1.f);
+				tileMap[x][y].setOutlineColor(sf::Color::Black);
+				tileMap[x][y].setPosition(x * gridSizeF, y * gridSizeF);
+			}
+			else {
+				tileMap[x][y].setSize(sf::Vector2f(gridSizeF, gridSizeF));
+				tileMap[x][y].setFillColor(sf::Color::Red);
+				tileMap[x][y].setPosition(x * gridSizeF, y * gridSizeF);
 
-			tileMap[x][y].setSize(sf::Vector2f(gridSizeF, gridSizeF));
-			tileMap[x][y].setFillColor(sf::Color::White);
-			tileMap[x][y].setOutlineThickness(1.f);
-			tileMap[x][y].setOutlineColor(sf::Color::Black);
-			tileMap[x][y].setPosition(x * gridSizeF, y * gridSizeF);
+			}
+
 		}
 	}
 
@@ -514,8 +532,9 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 	int toY = 0;
 
 	//character
-	//int half_Sprite_x = 0, half_sprite_y = 0;
+	int half_Sprite_x = 0, hald_sprite_y = 0;
 	bool keyPress = false;
+
 
 	//create sprite
 
@@ -571,14 +590,31 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		dt = dtClock.restart().asSeconds();
 
 		//update mouse positions
+		characterPosWindow = view.getCenter();
 
 		window.setView(view);
 
-		window.setView(window.getDefaultView());
 		//update game elements
+		
+		//get character postion
+		if (characterPosWindow.x < 0) {
+			characterPosWindow.x = -65;
+		}
+		characterPosGrid.x = characterPosWindow.x / gridSizeF;
 
+		if (characterPosWindow.y < 0) {//componsates for 0,0 logic error with negative numbers
+			characterPosWindow.y = -65;
+		}
+		characterPosGrid.y = characterPosWindow.y / gridSizeF;
+
+		window.setView(window.getDefaultView());
 
 		sf::Vector2f dir = { 0.0, 0.0 };
+
+		std::stringstream ss;
+		ss << "Character grid: " << characterPosGrid.x << " " << characterPosGrid.y << "\n";
+
+		text.setString(ss.str());
 
 		//events
 		sf::Event event;
@@ -588,11 +624,18 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 				window.close();
 
 		}
-		//update
-		//update input
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {//left
 
-			view.move(-viewSpeed * dt, 0.f);
+			if (characterPosWindow.x - 5 < 0) {
+				view.move(0.f, 0.f);
+			}
+			else if (characterPosGrid.y % 4 == 0) {
+				view.move(-viewSpeed * dt, 0.f);
+			}
+			else {
+				view.move(0.f, 0.f);
+			}
 			//character
 			dir.x -= 1.0;
 			direc = WEST;
@@ -601,7 +644,15 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {//Right
 
-			view.move(viewSpeed * dt, 0.f);
+			if (characterPosWindow.x > (mapSize - 1) * gridSizeF - 15) {// 32 is a static offset do to height of character in pixels
+				view.move(0.f, 0.f);
+			}
+			else if (characterPosGrid.y % 4 == 0) {
+				view.move(viewSpeed * dt, 0.f);
+			}
+			else {
+				view.move(0.f, 0.f);
+			}
 
 			dir.x += 1.0;
 			direc = EAST;
@@ -609,7 +660,15 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {//Up
 
-			view.move(0.f, -viewSpeed * dt);
+			if (characterPosWindow.y - 5 < 0) {
+				view.move(0.f, 0.f);
+			}
+			else if (characterPosGrid.x % 4 == 0) {
+				view.move(0.f, -viewSpeed * dt);
+			}
+			else {
+				view.move(0.f, 0.f);
+			}
 
 			dir.y -= 1.0;
 			direc = NORTH;
@@ -617,7 +676,15 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {//Down
 
-			view.move(0.f, viewSpeed * dt);
+			if (characterPosWindow.y > (mapSize - 1) * gridSizeF - 32) {// 32 is a static offset do to height of character in pixels
+				view.move(0.f, 0.f);
+			}
+			else if (characterPosGrid.x % 4 == 0) {
+				view.move(0.f, viewSpeed * dt);
+			}
+			else {
+				view.move(0.f, 0.f);
+			}
 
 			dir.y += 1.0;
 			direc = SOUTH;
@@ -696,38 +763,6 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		}
 
 
-/*		if (recClock.getElapsedTime().asMilliseconds() > MS_PER_PACKET / 4) { // doesnt garuentee u get a packet from everyone // higher denomenator means more lag??
-			try {
-				client.recievePacket(inPacket); // gameData packet
-				//inPacket >> oldInData;
-
-				inPacket >> inData;
-				int temp = inData.mSenderId;
-				//cout << "whT" << inData.mSenderId << endl;
-				//cout << "Size" << inPacket.getDataSize() << endl;
-				if (playerList.at(temp - 1)->getId() != client.getId()) {
-					playerList.at(temp - 1)->getPlayer().setPos(inData.mPos);
-					playerList.at(temp - 1)->getPlayer().setDirection(inData.mDirection);
-					playerList.at(temp - 1)->getPlayer().update(dt);
-					//playerList.at(temp - 1)->getPlayer().draw(window);
-					//playerList.at(temp - 1)->setPrevPacket(inPacket);
-					//playerList.at(temp - 1)->setPrevData(inData);
-				}
-
-				
-			}
-			catch (std::runtime_error& e) {
-				if (e.what() != "No packet to recieve") {
-					//cout << "Exception in recive packet" << e.what() << endl;
-				}
-
-			}
-			catch (std::out_of_range& e) {
-				cout << e.what() << endl;
-			}
-			recClock.restart();
-		}*/
-
 		for (int i = 0; i < playerList.size(); i++) // draw all but yourself
 		{
 			if (playerList.at(i)->getId() != client.getId()) {
@@ -735,44 +770,6 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 			}
 		}
 
-		//for (int i = 0; i < playerList.size(); i++) // you are in player list 
-		//{
-		//	try {
-		//		if (client.recievePacket(inPacket)) {
-		//			//client.recievePacket(inPacket); // gameData packet
-		//			inPacket >> oldInData;
-
-		//			if (oldInData.mSenderId != client.getId()) {
-		//				inPacket >> inData;
-		//				cout << "whT" << inData.mSenderId << endl;
-		//				cout << "Size" << inPacket.getDataSize() << endl;
-		//				playerList.at((int)--inData.mSenderId)->getPlayer().setPos(inData.mPos);
-		//				playerList.at((int)--inData.mSenderId)->getPlayer().setDirection(inData.mDirection);
-		//				playerList.at((int)--inData.mSenderId)->getPlayer().update(dt);
-		//				playerList.at((int)--inData.mSenderId)->getPlayer().draw(window);
-		//			}
-		//			
-
-
-		//		}
-		//		else {
-
-		//		}
-
-		//	}
-		//	catch (std::runtime_error& e) {
-		//		if (e.what() != "No packet to recieve") {
-		//			//cout << "Exception in recive packet" << e.what() << endl;
-		//		}
-
-		//	}
-		//	catch (std::out_of_range& e) {
-		//		cout << e.what() << endl;
-		//	}
-
-		//}
-
-		//window.clear();
 		window.setView(window.getDefaultView());
 		model.draw(window);
 
