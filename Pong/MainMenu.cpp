@@ -653,6 +653,8 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 
 		client.sendPacket(outPacket);
 
+		//cout << playerList.size() << endl;
+
 		for (int i = 0; i < playerList.size(); i++) // you are in player list 
 		{
 			try {
