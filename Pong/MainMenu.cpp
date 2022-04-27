@@ -641,7 +641,8 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		// lhs << rhs.mSenderId << rhs.mRecipientId << rhs.mGameActive << rhs.temp << rhs.mMove.x << rhs.mMove.y << rhs.mPos.x << rhs.mPos.y << rhs.mIsCaught << rhs.mGamePaused;
 		//GameData(sf::Vector2f move, sf::Vector2f pos, bool isCaught = false, bool gamePaused = false, Direction direc = NORTH, sf::Uint16 SenderId = 0, sf::Uint16 RecipientId = 0, bool GameActive = false, std::string Message = "", sf::String temp = "")
 
-		GameData data({}, model.getPos(), isCaught, false, direc, client.getId(), SERVER_ID, true, "", "");
+		//GameData data({}, model.getPos(), isCaught, false, direc, client.getId(), SERVER_ID, true, "", "");
+		GameData data({}, view.getCenter(), isCaught, false, direc, client.getId(), SERVER_ID, true, "", "");
 		sf::Packet outPacket;
 		outPacket << data;
 
@@ -660,10 +661,11 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 				inPacket >> inData;
 				//cout << inData.mSenderId << endl;
 				if (inData.mSenderId != client.getId()) {
-					playerList.at(i)->getPlayer().setPos(data.mPos);
-					playerList.at(i)->getPlayer().setDirection(data.mDirection);
+					playerList.at(i)->getPlayer().setPos(inData.mPos);
+					playerList.at(i)->getPlayer().setDirection(inData.mDirection);
 					playerList.at(i)->getPlayer().update(dt);
 					playerList.at(i)->getPlayer().draw(window);
+					cout << "X: " << playerList.at(i)->getPlayer().getPos().x << "Y: " << playerList.at(i)->getPlayer().getPos().y << endl;
 				}
 			}
 			catch (std::runtime_error& e) {
@@ -678,13 +680,13 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 
 		}
 
-		window.clear();
+		//window.clear();
 		window.setView(window.getDefaultView());
-		//model.draw(window);
+		model.draw(window);
 
 		window.draw(text);
-		playerList.at(0)->getPlayer().draw(window);
-		playerList.at(1)->getPlayer().draw(window);
+		//playerList.at(0)->getPlayer().draw(window);
+		//playerList.at(1)->getPlayer().draw(window);
 		//finished
 		window.display();
 	}

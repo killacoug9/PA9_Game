@@ -120,7 +120,7 @@ public:
         sprite.setPosition(pos);
     }
 
-    sf::Vector2f getPos() { return pos; }
+    sf::Vector2f& getPos() { return pos; }
 
 private:
     static constexpr float speed = 100.0;
