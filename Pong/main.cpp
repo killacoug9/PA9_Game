@@ -26,6 +26,7 @@
 
 // someone will be host(preferably beefy computer), and the host will have server and client, others will jsut have client
 #define SERVER_LOCAL_IP "10.219.207.40"
+//#define SERVER_LOCAL_IP "10.220.45.9"
 
 
 std::fstream outfile; // global scope cuzz fucc it why not

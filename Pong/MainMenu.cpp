@@ -450,6 +450,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 	unsigned girdSizeU = static_cast<unsigned>(gridSizeF);
 	float dt = 0.f;
 	sf::Clock dtClock;
+	sf::Clock packetClock;
 
 	sf::Text text;
 	sf::Font font;
@@ -642,15 +643,18 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		//GameData(sf::Vector2f move, sf::Vector2f pos, bool isCaught = false, bool gamePaused = false, Direction direc = NORTH, sf::Uint16 SenderId = 0, sf::Uint16 RecipientId = 0, bool GameActive = false, std::string Message = "", sf::String temp = "")
 
 		//GameData data({}, model.getPos(), isCaught, false, direc, client.getId(), SERVER_ID, true, "", "");
-		GameData data({}, view.getCenter(), isCaught, false, direc, client.getId(), SERVER_ID, true, "", "");
-		sf::Packet outPacket;
-		outPacket << data;
+		if (packetClock.getElapsedTime().asMilliseconds() > 100) {
+			GameData data({}, view.getCenter(), isCaught, false, direc, client.getId(), SERVER_ID, true, "", "");
+			sf::Packet outPacket;
+			outPacket << data;
+
+			client.sendPacket(outPacket);
+			packetClock.restart();
+		}
+
 
 		GameData inData;
 		sf::Packet inPacket;
-
-		client.sendPacket(outPacket);
-
 		//cout << playerList.size() << endl;
 
 		for (int i = 0; i < playerList.size(); i++) // you are in player list 
@@ -665,7 +669,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 					playerList.at(i)->getPlayer().setDirection(inData.mDirection);
 					playerList.at(i)->getPlayer().update(dt);
 					playerList.at(i)->getPlayer().draw(window);
-					cout << "X: " << playerList.at(i)->getPlayer().getPos().x << "Y: " << playerList.at(i)->getPlayer().getPos().y << endl;
+					//cout << "X: " << playerList.at(i)->getPlayer().getPos().x << "Y: " << playerList.at(i)->getPlayer().getPos().y << endl;
 				}
 			}
 			catch (std::runtime_error& e) {
