@@ -850,6 +850,12 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 			}
 		}
 
+		for (auto& i : coins) {
+
+			i.draw(window);
+
+		}
+
 		window.setView(window.getDefaultView());
 		model.draw(window);
 
