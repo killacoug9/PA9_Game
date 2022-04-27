@@ -122,6 +122,10 @@ public:
 
     sf::Vector2f& getPos() { return pos; }
 
+    sf::FloatRect getGlobalBounds() {
+        return sprite.getGlobalBounds();
+    }
+
 private:
     static constexpr float speed = 100.0;
     sf::Vector2f pos;

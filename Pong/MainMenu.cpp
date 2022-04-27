@@ -1,7 +1,11 @@
 #include"MainMenu.hpp"
 #include"character.hpp"
 
+#include "Coin.h"
+
 #include "Server.hpp"
+
+
 
 MainMenu::MainMenu(float width, float height) {
 	
@@ -471,6 +475,24 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 	text.setPosition(20.f, 20.f);
 	text.setString("Test");
 
+	sf::Text textCoin;
+	textCoin.setCharacterSize(30);
+	textCoin.setFillColor(sf::Color::Green);
+	textCoin.setFont(font);
+	textCoin.setPosition(20.f, 50.f);
+	textCoin.setString("Test");
+
+
+
+	sf::Text score;
+	score.setCharacterSize(30);
+	score.setFillColor(sf::Color::Green);
+	score.setFont(font);
+	score.setPosition(20.f, 80.f);
+	score.setString("Test");
+
+
+
 	//init window
 
 	sf::Vector2f characterPosWindow;
@@ -584,6 +606,30 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 	std::thread ClientRecieveThread(lambdaThread, std::ref(window), std::ref(client), std::ref(playerList), std::ref(recClock), std::ref(inData), std::ref(inPacket), std::ref(dt));
 	
 
+
+	//coins
+	std::vector<Coin> coins;
+	sf::Vector2i coinGridPos;
+	Coin coin;
+	coin.spawn();
+
+	coins.push_back(coin); //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	sf::Vector2f NULLCase = { NULL, NULL };
+
+
+	//collision
+
+	sf::FloatRect NextPos;
+
+	int SCORE = 0;
+
+
+	//Time
+
+	sf::Time second = sf::seconds(0.01f);
+
+
 	while (window.isOpen())
 	{
 		//Update dt
@@ -615,6 +661,24 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		ss << "Character grid: " << characterPosGrid.x << " " << characterPosGrid.y << "\n";
 
 		text.setString(ss.str());
+
+		std::stringstream cs;
+		cs << "Coin grid: " << coinGridPos.x << " " << coinGridPos.y << "\n";
+		textCoin.setString(cs.str());
+
+		std::stringstream sss;
+		sss << "Score: " << SCORE << "\n";
+		score.setString(sss.str());
+
+		//events
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				window.close();
+
+		}
+
 
 		//events
 		sf::Event event;
@@ -747,6 +811,31 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 			}
 		}
 
+		//Coin stuff
+		if (coins.size() < 7) {
+			coin.spawn();
+			coins.push_back(coin);
+		}
+
+		//collision
+		for (auto& coin : coins) {
+
+
+			coinGridPos = coin.itemGridPos();
+
+			if (coinGridPos == characterPosGrid) {
+				coin.spawn();
+				//coin.deleteItem(); 
+
+				SCORE++;
+				std::cout << "COLLISION" << std::endl;
+			}
+
+
+
+
+
+		}
 
 		//selector
 
@@ -774,7 +863,9 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		model.draw(window);
 
 		window.draw(text);
-		
+		window.draw(textCoin);
+		window.draw(score);
+
 		//finished
 		window.display();
 	}

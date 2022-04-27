@@ -164,9 +164,11 @@
   <ItemGroup>
     <ClInclude Include="character.hpp" />
     <ClInclude Include="Client.hpp" />
+    <ClInclude Include="Coin.hpp" />
     <ClInclude Include="Data.hpp" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="GameData.hpp" />
+    <ClInclude Include="Item.hpp" />
     <ClInclude Include="LobbyData.hpp" />
     <ClInclude Include="MainMenu.hpp" />
     <ClInclude Include="Player.hpp" />
