@@ -57,6 +57,16 @@ public:
 
 	void setId(sf::Uint16& temp) { this->mId = temp; } // put a &here, idk why
 
+	void setPrevPacket(sf::Packet& temp) { this->lastPacket = temp; } // put a &here, idk why
+	
+	//void setPrevData(GameData*& temp) { this->mPrevData = temp; } // put a &here, idk why
+
+	void setPrevData(GameData temp) { this->mPrevData = temp; } // put a &here, idk why
+
+	//GameData*& getPrevData() { return mPrevData; }
+	
+	GameData& getPrevData() { return mPrevData; }
+
 	sf::Uint16 getId() { return this->mId; }
 
 	sf::TcpSocket& getSocket();
@@ -65,10 +75,12 @@ public:
 
 	Character& getPlayer() { return player; }
 
+
+
 protected:
 	
 	sf::TcpSocket mSocket; //  // comment to self:: mutualbetween client and server(middleman)
-
+	GameData mPrevData;
 	sf::Packet lastPacket; // maybe need this?
 	sf::Uint16 mId; // maybe make capslock??
 	Character player;

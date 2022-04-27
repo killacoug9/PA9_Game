@@ -52,6 +52,14 @@ public: // fuck it, imm just make it public because i dont wanna deal with sette
 		this->parse(packet);
 	}
 
+	Data(Data& copy) {
+		this->mSenderId = copy.mSenderId;
+		this->mRecipientId = copy.mRecipientId;
+		this->mGameActive = copy.mGameActive;
+		this->mMessage = copy.mMessage;
+		this->temp = copy.temp;
+	}
+
 	void parse(sf::Packet& packet) {
 		this->mMessage = "";
 		if (packet >> mSenderId >> mRecipientId >> mGameActive >> temp) {

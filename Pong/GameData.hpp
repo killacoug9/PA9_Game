@@ -37,6 +37,14 @@ public:
         }
     }
 
+    GameData(GameData& copy) {
+        this->mMove = copy.mMove;
+        this->mPos = copy.mPos;
+        this->mIsCaught = copy.mIsCaught;
+        this->mGamePaused = copy.mGamePaused;
+        this->mDirection = copy.mDirection;
+    }
+
     // was gonna do this but not yet
     //void parse(sf::Packet& packet) {
         //this->Data::parse(packet);

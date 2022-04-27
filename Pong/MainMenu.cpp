@@ -434,6 +434,8 @@ void allowJoinLoop(Server& server, sf::RenderWindow& window, sf::Event event, sf
 
 void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client& client, std::vector<Client*>& playerList) {
 
+#define MS_PER_PACKET 100
+
 	client.getSocket().setBlocking(false);
 
 	bool isCaught = false;
@@ -458,6 +460,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 	float dt = 0.f;
 	sf::Clock dtClock;
 	sf::Clock packetClock;
+	sf::Clock recClock;
 
 	sf::Text text;
 	sf::Font font;
@@ -644,7 +647,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		//draw ui
 
 		
-		if (packetClock.getElapsedTime().asMilliseconds() > 10) {
+		if (packetClock.getElapsedTime().asMilliseconds() > MS_PER_PACKET) {
 			GameData data({}, view.getCenter(), isCaught, false, direc, client.getId(), SERVER_ID, true, "", "");
 			sf::Packet outPacket;
 			outPacket << data;
@@ -654,32 +657,25 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 		}
 
 
-		//cout << playerList.size() << endl;
-
-		for (int i = 0; i < playerList.size(); i++) // you are in player list 
-		{
+		if (recClock.getElapsedTime().asMilliseconds() > MS_PER_PACKET / 4) { // doesnt garuentee u get a packet from everyone // higher denomenator means more lag??
 			try {
-				if (client.recievePacket(inPacket)) {
-					//client.recievePacket(inPacket); // gameData packet
-					inPacket >> oldInData;
+				client.recievePacket(inPacket); // gameData packet
+				//inPacket >> oldInData;
 
-					if (oldInData.mSenderId != client.getId()) {
-						inPacket >> inData;
-						cout << "whT" << inData.mSenderId << endl;
-						cout << "Size" << inPacket.getDataSize() << endl;
-						playerList.at((int)--inData.mSenderId)->getPlayer().setPos(inData.mPos);
-						playerList.at((int)--inData.mSenderId)->getPlayer().setDirection(inData.mDirection);
-						playerList.at((int)--inData.mSenderId)->getPlayer().update(dt);
-						playerList.at((int)--inData.mSenderId)->getPlayer().draw(window);
-					}
-					
-
-
-				}
-				else {
-
+				inPacket >> inData;
+				int temp = inData.mSenderId;
+				//cout << "whT" << inData.mSenderId << endl;
+				//cout << "Size" << inPacket.getDataSize() << endl;
+				if (playerList.at(temp - 1)->getId() != client.getId()) {
+					playerList.at(temp - 1)->getPlayer().setPos(inData.mPos);
+					playerList.at(temp - 1)->getPlayer().setDirection(inData.mDirection);
+					playerList.at(temp - 1)->getPlayer().update(dt);
+					//playerList.at(temp - 1)->getPlayer().draw(window);
+					//playerList.at(temp - 1)->setPrevPacket(inPacket);
+					//playerList.at(temp - 1)->setPrevData(inData);
 				}
 
+				
 			}
 			catch (std::runtime_error& e) {
 				if (e.what() != "No packet to recieve") {
@@ -690,16 +686,59 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 			catch (std::out_of_range& e) {
 				cout << e.what() << endl;
 			}
-
+			recClock.restart();
 		}
+
+		for (int i = 0; i < playerList.size(); i++) // draw all but yourself
+		{
+			if (playerList.at(i)->getId() != client.getId()) {
+				playerList.at(i)->getPlayer().draw(window);
+			}
+		}
+
+		//for (int i = 0; i < playerList.size(); i++) // you are in player list 
+		//{
+		//	try {
+		//		if (client.recievePacket(inPacket)) {
+		//			//client.recievePacket(inPacket); // gameData packet
+		//			inPacket >> oldInData;
+
+		//			if (oldInData.mSenderId != client.getId()) {
+		//				inPacket >> inData;
+		//				cout << "whT" << inData.mSenderId << endl;
+		//				cout << "Size" << inPacket.getDataSize() << endl;
+		//				playerList.at((int)--inData.mSenderId)->getPlayer().setPos(inData.mPos);
+		//				playerList.at((int)--inData.mSenderId)->getPlayer().setDirection(inData.mDirection);
+		//				playerList.at((int)--inData.mSenderId)->getPlayer().update(dt);
+		//				playerList.at((int)--inData.mSenderId)->getPlayer().draw(window);
+		//			}
+		//			
+
+
+		//		}
+		//		else {
+
+		//		}
+
+		//	}
+		//	catch (std::runtime_error& e) {
+		//		if (e.what() != "No packet to recieve") {
+		//			//cout << "Exception in recive packet" << e.what() << endl;
+		//		}
+
+		//	}
+		//	catch (std::out_of_range& e) {
+		//		cout << e.what() << endl;
+		//	}
+
+		//}
 
 		//window.clear();
 		window.setView(window.getDefaultView());
 		model.draw(window);
 
 		window.draw(text);
-		//playerList.at(0)->getPlayer().draw(window);
-		//playerList.at(1)->getPlayer().draw(window);
+		
 		//finished
 		window.display();
 	}
