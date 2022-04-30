@@ -175,6 +175,7 @@
     <ClInclude Include="StartMenu.hpp" />
     <ClInclude Include="PlayerEntity.hpp" />
     <ClInclude Include="Server.hpp" />
+    <ClInclude Include="testCase.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="log.txt" />
