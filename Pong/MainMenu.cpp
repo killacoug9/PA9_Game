@@ -438,7 +438,7 @@ void allowJoinLoop(Server& server, sf::RenderWindow& window, sf::Event event, sf
 
 void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client& client, std::vector<Client*>& playerList) {
 
-#define MS_PER_PACKET 100
+#define MS_PER_PACKET 200
 
 	client.getSocket().setBlocking(false);
 
@@ -569,15 +569,14 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 
 	auto lambdaThread = [](sf::RenderWindow& window, Client& client, std::vector<Client*>& playerList, sf::Clock& recClock, GameData& inData, sf::Packet& inPacket, float& dt) {
 		while (window.isOpen()) {
-			if (recClock.getElapsedTime().asMilliseconds() > MS_PER_PACKET / 4) { // doesnt garuentee u get a packet from everyone // higher denomenator means more lag??
+			if (recClock.getElapsedTime().asMilliseconds() > MS_PER_PACKET / 20) { // doesnt garuentee u get a packet from everyone // higher denomenator means more lag??
 				try {
 					client.recievePacket(inPacket); // gameData packet
 					//inPacket >> oldInData;
 
 					inPacket >> inData;
 					int temp = inData.mSenderId;
-					//cout << "whT" << inData.mSenderId << endl;
-					//cout << "Size" << inPacket.getDataSize() << endl;
+					
 					if (playerList.at(temp - 1)->getId() != client.getId()) {
 						playerList.at(temp - 1)->getPlayer().setPos(inData.mPos);
 						playerList.at(temp - 1)->getPlayer().setDirection(inData.mDirection);
@@ -830,7 +829,7 @@ void runGame(sf::RenderWindow& window, int windowWidth, int windowHeight, Client
 
 		
 		if (packetClock.getElapsedTime().asMilliseconds() > MS_PER_PACKET) {
-			GameData data({}, view.getCenter(), isCaught, false, direc, client.getId(), SERVER_ID, true, "", "");
+			GameData data({}, {view.getCenter().x - 32, view.getCenter().y - 32}, isCaught, false, direc, client.getId(), SERVER_ID, true, "", "");
 			sf::Packet outPacket;
 			outPacket << data;
 
